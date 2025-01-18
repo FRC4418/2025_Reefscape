@@ -4,72 +4,43 @@
 
 package frc.robot;
 
-import java.util.ArrayList;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathPlannerPath;
-
-import choreo.trajectory.Trajectory;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.commands.ElevatorDownCommand;
+import frc.robot.subsystems.Elevator;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.OIConstants;
-import frc.robot.subsystems.Drivetrain.DriveSubsystem;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
+/**
+ * This class is where the bulk of the robot should be declared. Since Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * subsystems, commands, and trigger mappings) should be declared here.
+ */
 public class RobotContainer {
-  
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  // The robot's subsystems and commands are defined here...
+  private final Elevator elevator = new Elevator();
 
+  // Replace with CommandPS4Controller or CommandJoystick if needed
+  private final CommandXboxController m_driverController = new CommandXboxController(0);
 
-  XboxController m_driverController = new XboxController(0);
-
-  CommandXboxController m_CommandXboxControllerDriver = new CommandXboxController(0);
-
+  /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-
-        m_robotDrive.setDefaultCommand(
-        new RunCommand(
-            () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                true),
-            m_robotDrive));
-
+    // Configure the trigger bindings
     configureBindings();
   }
 
   private void configureBindings() {
-    m_CommandXboxControllerDriver.a().onTrue(new InstantCommand(() -> m_robotDrive.zeroHeading()));
+    m_driverController.povDown().whileTrue(new ElevatorDownCommand(elevator));
+    m_driverController.povUp().whileTrue(new ElevatorDownCommand(elevator));
   }
 
+  /**
+   * Use this to pass the autonomous command to the main {@link Robot} class.
+   *
+   * @return the command to run in autonomous
+   */
   public Command getAutonomousCommand() {
-    try{
-        // Load the path you want to follow using its name in the GUI
-      // PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory("New Path");
-
-      var path = PathPlannerPath.fromPathFile("Example Path");
-
-      var traj = path.generateTrajectory(m_robotDrive.getRobotRelativeSpeeds(), m_robotDrive.getPose().getRotation(), m_robotDrive.config);
-      
-
-
-
-        // Create a path following command using AutoBuilder. This will also trigger event markers.
-      return new InstantCommand(()->m_robotDrive.resetOdometry(path.getStartingDifferentialPose())).andThen(AutoBuilder.followPath(path));
-
-    } catch (Exception e) {
-
-      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
-      return Commands.none();
-    }
+    // An example command will be run in autonomous
+    return null;
   }
 }
