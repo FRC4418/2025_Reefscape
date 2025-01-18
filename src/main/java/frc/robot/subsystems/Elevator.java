@@ -24,8 +24,8 @@ public class Elevator extends SubsystemBase {
 
   public Elevator() {
 
-    armMaster.setInverted(false);
-    armSlave.setInverted(true);
+    
+    armSlave.setControl(new Follower(armMaster.getDeviceID(), false));
 
   }
 
