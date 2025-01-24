@@ -5,15 +5,24 @@
 package frc.robot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
+import com.pathplanner.lib.pathfinding.Pathfinder;
 
 import choreo.trajectory.Trajectory;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,10 +32,17 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.Drivetrain.DriveSubsystem;
+import frc.robot.subsystems.Vision.ToAprilTag;
+import frc.robot.subsystems.Vision.VisionSubsystem;
+import frc.utils.LimelightHelpers;
 
 public class RobotContainer {
   
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+
+  private final VisionSubsystem m_vision = new VisionSubsystem();
+
+  private final ToAprilTag toAprilTag = new ToAprilTag(m_vision, m_robotDrive);
 
 
   XboxController m_driverController = new XboxController(0);
@@ -34,6 +50,8 @@ public class RobotContainer {
   CommandXboxController m_CommandXboxControllerDriver = new CommandXboxController(0);
 
   public RobotContainer() {
+
+    DataLogManager.start();
 
         m_robotDrive.setDefaultCommand(
         new RunCommand(
@@ -47,16 +65,53 @@ public class RobotContainer {
     configureBindings();
   }
 
+
+
   private void configureBindings() {
     m_CommandXboxControllerDriver.a().onTrue(new InstantCommand(() -> m_robotDrive.zeroHeading()));
+
+    m_CommandXboxControllerDriver.b().whileTrue(Commands.runOnce(() -> {
+
+
+      Pose2d tagPose = m_vision.pose3dRobotRelative().toPose2d();
+
+      var poses = new ArrayList<Pose2d>();
+      poses.add(m_robotDrive.getPose());
+      Pose3d targetPose3d = m_vision.pose3dRobotRelative();
+
+      Pose2d targetPose = new Pose2d(-targetPose3d.getZ() + 1,-targetPose3d.getX(),m_robotDrive.getPose().getRotation());
+
+
+      Transform2d desiredTransform = new Transform2d(new Pose2d(), targetPose);
+      Pose2d endPose = m_robotDrive.getPose().transformBy(desiredTransform);
+      poses.add(endPose);
+
+
+
+
+      System.out.println(tagPose.toString());
+
+      List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(poses);
+
+      PathConstraints constraints = new PathConstraints(1, 1, 2 * Math.PI, 4 * Math.PI);
+
+      var path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0, new Rotation2d()));
+      path.preventFlipping = true;
+
+      AutoBuilder.pathfindToPose(endPose, constraints).schedule();
+
+      // AutoBuilder.followPath(path).schedule();
+    }));
   }
+
+
 
   public Command getAutonomousCommand() {
     try{
         // Load the path you want to follow using its name in the GUI
-      // PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory("New Path");
+      PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory("New Path");
 
-      var path = PathPlannerPath.fromPathFile("Example Path");
+      // var path = PathPlannerPath.fromPathFile("Example Path");
 
       var traj = path.generateTrajectory(m_robotDrive.getRobotRelativeSpeeds(), m_robotDrive.getPose().getRotation(), m_robotDrive.config);
       

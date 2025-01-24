@@ -106,7 +106,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    System.out.println(getYaw());
+    // System.out.println(getYaw());
     // Update the odometry in the periodic block
     m_odometry.update(
         Rotation2d.fromDegrees(getYaw()),
