@@ -9,7 +9,7 @@
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,
-  "robotMass": 110.0,
+  "robotMass": 56.7,
   "robotMOI": 5.0,
   "robotTrackwidth": 0.546,
   "driveWheelRadius": 0.0381,
@@ -28,5 +28,10 @@
   "brModuleY": -0.26,
   "bumperOffsetX": 0.0,
   "bumperOffsetY": 0.0,
-  "robotFeatures": []
+  "robotFeatures": [
+    "{\"name\":\"Rectangle\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.3,\"y\":0.0},\"size\":{\"width\":0.7,\"length\":0.1},\"borderRadius\":0.0,\"strokeWidth\":0.02,\"filled\":true}}",
+    "{\"name\":\"Rectangle\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":-0.3,\"y\":0.0},\"size\":{\"width\":0.7,\"length\":0.1},\"borderRadius\":0.0,\"strokeWidth\":0.02,\"filled\":true}}",
+    "{\"name\":\"Line\",\"type\":\"line\",\"data\":{\"start\":{\"x\":0.3,\"y\":0.0},\"end\":{\"x\":0.6,\"y\":0.0},\"strokeWidth\":0.02}}",
+    "{\"name\":\"Line\",\"type\":\"line\",\"data\":{\"start\":{\"x\":-0.3,\"y\":0.0},\"end\":{\"x\":-0.6,\"y\":0.0},\"strokeWidth\":0.02}}"
+  ]
 }
