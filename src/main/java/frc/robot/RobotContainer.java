@@ -8,11 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.pathfinding.Pathfinder;
+import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import choreo.trajectory.Trajectory;
 import edu.wpi.first.math.MathUtil;
@@ -22,9 +24,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -32,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.Drivetrain.DriveSubsystem;
+import frc.robot.subsystems.ArmEncoderSubsystem;
 import frc.robot.subsystems.Vision.ToAprilTag;
 import frc.robot.subsystems.Vision.VisionSubsystem;
 import frc.utils.LimelightHelpers;
@@ -41,6 +46,8 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
   private final VisionSubsystem m_vision = new VisionSubsystem();
+
+  private final ArmEncoderSubsystem m_armEncoder = new ArmEncoderSubsystem();
 
   private final ToAprilTag toAprilTag = new ToAprilTag(m_vision, m_robotDrive);
 
@@ -63,6 +70,17 @@ public class RobotContainer {
             m_robotDrive));
 
     configureBindings();
+
+    // PathfindingCommand.warmupCommand().schedule();
+
+    SmartDashboard.putData("Pathfind to Pickup Pos", AutoBuilder.pathfindToPose(
+      new Pose2d(10, 0, Rotation2d.fromDegrees(0)), 
+      new PathConstraints(
+        4.0, 4.0, 
+        Units.degreesToRadians(360), Units.degreesToRadians(540)
+      ), 
+      0
+    ));
   }
 
 
@@ -79,8 +97,8 @@ public class RobotContainer {
       poses.add(m_robotDrive.getPose());
       Pose3d targetPose3d = m_vision.pose3dRobotRelative();
 
-      Pose2d targetPose = new Pose2d(-targetPose3d.getZ() + 1,-targetPose3d.getX(),m_robotDrive.getPose().getRotation());
-
+      // Pose2d targetPose = new Pose2d(-targetPose3d.getZ() + 1,-targetPose3d.getX(),m_robotDrive.getPose().getRotation());
+      Pose2d targetPose = new Pose2d(1,0.2,new Rotation2d());
 
       Transform2d desiredTransform = new Transform2d(new Pose2d(), targetPose);
       Pose2d endPose = m_robotDrive.getPose().transformBy(desiredTransform);
@@ -93,14 +111,16 @@ public class RobotContainer {
 
       List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(poses);
 
-      PathConstraints constraints = new PathConstraints(1, 1, 2 * Math.PI, 4 * Math.PI);
+      PathConstraints constraints = new PathConstraints(4, 1, 2 * Math.PI, 4 * Math.PI);
 
       var path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0, new Rotation2d()));
       path.preventFlipping = true;
 
-      AutoBuilder.pathfindToPose(endPose, constraints).schedule();
 
-      // AutoBuilder.followPath(path).schedule();
+
+      // AutoBuilder.pathfindToPose(endPose, constraints,0d).schedule();;
+
+      AutoBuilder.followPath(path).schedule();
     }));
   }
 
