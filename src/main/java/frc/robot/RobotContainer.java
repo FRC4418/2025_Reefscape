@@ -36,7 +36,6 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.Drivetrain.DriveSubsystem;
-import frc.robot.subsystems.ArmEncoderSubsystem;
 import frc.robot.subsystems.Vision.ToAprilTag;
 import frc.robot.subsystems.Vision.VisionSubsystem;
 import frc.utils.LimelightHelpers;
@@ -47,7 +46,6 @@ public class RobotContainer {
 
   private final VisionSubsystem m_vision = new VisionSubsystem();
 
-  private final ArmEncoderSubsystem m_armEncoder = new ArmEncoderSubsystem();
 
   private final ToAprilTag toAprilTag = new ToAprilTag(m_vision, m_robotDrive);
 
