@@ -35,6 +35,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.SetClimberPercentSpeed;
+import frc.robot.commands.SetClimberPos;
+import frc.robot.commands.SpinAlgeeSubsystem;
+import frc.robot.subsystems.AlgeeSubsystem;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.Drivetrain.DriveSubsystem;
 import frc.robot.subsystems.Vision.ToAprilTag;
 import frc.robot.subsystems.Vision.VisionSubsystem;
@@ -46,6 +51,9 @@ public class RobotContainer {
 
   private final VisionSubsystem m_vision = new VisionSubsystem();
 
+  private final ClimberSubsystem m_climber = new ClimberSubsystem();
+
+  private final AlgeeSubsystem m_algeeSubsystem = new AlgeeSubsystem();
 
   private final ToAprilTag toAprilTag = new ToAprilTag(m_vision, m_robotDrive);
 
@@ -84,42 +92,54 @@ public class RobotContainer {
 
 
   private void configureBindings() {
-    m_CommandXboxControllerDriver.a().onTrue(new InstantCommand(() -> m_robotDrive.zeroHeading()));
+    // m_CommandXboxControllerDriver.a().onTrue(new InstantCommand(() -> m_robotDrive.zeroHeading()));
+    m_CommandXboxControllerDriver.y().whileTrue(new SetClimberPercentSpeed(m_climber, -0.1));
+    m_CommandXboxControllerDriver.x().whileTrue(new SetClimberPercentSpeed(m_climber, 0.1));
 
-    m_CommandXboxControllerDriver.b().whileTrue(Commands.runOnce(() -> {
+    m_CommandXboxControllerDriver.rightBumper().whileTrue(new SpinAlgeeSubsystem(m_algeeSubsystem, 0, 1));
 
+    m_CommandXboxControllerDriver.b().whileTrue(new SpinAlgeeSubsystem(m_algeeSubsystem, -0.3, -0.3));
 
-      Pose2d tagPose = m_vision.pose3dRobotRelative().toPose2d();
+    m_CommandXboxControllerDriver.a().whileTrue(new SpinAlgeeSubsystem(m_algeeSubsystem, 1, 0));
 
-      var poses = new ArrayList<Pose2d>();
-      poses.add(m_robotDrive.getPose());
-      Pose3d targetPose3d = m_vision.pose3dRobotRelative();
+    m_climber.setDefaultCommand(new SetClimberPercentSpeed(m_climber, 0));
 
-      // Pose2d targetPose = new Pose2d(-targetPose3d.getZ() + 1,-targetPose3d.getX(),m_robotDrive.getPose().getRotation());
-      Pose2d targetPose = new Pose2d(1,0.2,new Rotation2d());
+    m_algeeSubsystem.setDefaultCommand(new SpinAlgeeSubsystem(m_algeeSubsystem, 0, 0));
 
-      Transform2d desiredTransform = new Transform2d(new Pose2d(), targetPose);
-      Pose2d endPose = m_robotDrive.getPose().transformBy(desiredTransform);
-      poses.add(endPose);
+      // m_CommandXboxControllerDriver.b().whileTrue(Commands.runOnce(() -> {
 
 
+    //   Pose2d tagPose = m_vision.pose3dRobotRelative().toPose2d();
+
+    //   var poses = new ArrayList<Pose2d>();
+    //   poses.add(m_robotDrive.getPose());
+    //   Pose3d targetPose3d = m_vision.pose3dRobotRelative();
+
+    //   // Pose2d targetPose = new Pose2d(-targetPose3d.getZ() + 1,-targetPose3d.getX(),m_robotDrive.getPose().getRotation());
+    //   Pose2d targetPose = new Pose2d(1,0.2,new Rotation2d());
+
+    //   Transform2d desiredTransform = new Transform2d(new Pose2d(), targetPose);
+    //   Pose2d endPose = m_robotDrive.getPose().transformBy(desiredTransform);
+    //   poses.add(endPose);
 
 
-      System.out.println(tagPose.toString());
-
-      List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(poses);
-
-      PathConstraints constraints = new PathConstraints(4, 1, 2 * Math.PI, 4 * Math.PI);
-
-      var path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0, new Rotation2d()));
-      path.preventFlipping = true;
 
 
+    //   System.out.println(tagPose.toString());
 
-      // AutoBuilder.pathfindToPose(endPose, constraints,0d).schedule();;
+    //   List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(poses);
 
-      AutoBuilder.followPath(path).schedule();
-    }));
+    //   PathConstraints constraints = new PathConstraints(4, 1, 2 * Math.PI, 4 * Math.PI);
+
+    //   var path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0, new Rotation2d()));
+    //   path.preventFlipping = true;
+
+
+
+    //   // AutoBuilder.pathfindToPose(endPose, constraints,0d).schedule();;
+
+    //   AutoBuilder.followPath(path).schedule();
+    // }));
   }
 
 
