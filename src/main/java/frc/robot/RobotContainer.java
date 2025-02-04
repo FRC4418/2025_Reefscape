@@ -37,8 +37,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.SetClimberPercentSpeed;
 import frc.robot.commands.SetClimberPos;
-import frc.robot.commands.SpinAlgeeSubsystem;
-import frc.robot.subsystems.AlgeeSubsystem;
+import frc.robot.commands.SpinAlgaeSubsystem;
+import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.Drivetrain.DriveSubsystem;
 import frc.robot.subsystems.Vision.ToAprilTag;
@@ -49,13 +49,13 @@ public class RobotContainer {
   
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
-  private final VisionSubsystem m_vision = new VisionSubsystem();
+  // private final VisionSubsystem m_vision = new VisionSubsystem();
 
   private final ClimberSubsystem m_climber = new ClimberSubsystem();
 
-  private final AlgeeSubsystem m_algeeSubsystem = new AlgeeSubsystem();
+  private final AlgaeSubsystem m_algeeSubsystem = new AlgaeSubsystem();
 
-  private final ToAprilTag toAprilTag = new ToAprilTag(m_vision, m_robotDrive);
+  // private final ToAprilTag toAprilTag = new ToAprilTag(m_vision, m_robotDrive);
 
 
   XboxController m_driverController = new XboxController(0);
@@ -96,15 +96,15 @@ public class RobotContainer {
     m_CommandXboxControllerDriver.y().whileTrue(new SetClimberPercentSpeed(m_climber, -0.1));
     m_CommandXboxControllerDriver.x().whileTrue(new SetClimberPercentSpeed(m_climber, 0.1));
 
-    m_CommandXboxControllerDriver.rightBumper().whileTrue(new SpinAlgeeSubsystem(m_algeeSubsystem, 0, 1));
+    m_CommandXboxControllerDriver.rightBumper().whileTrue(new SpinAlgaeSubsystem(m_algeeSubsystem, 0, 1));
 
-    m_CommandXboxControllerDriver.b().whileTrue(new SpinAlgeeSubsystem(m_algeeSubsystem, -0.3, -0.3));
+    m_CommandXboxControllerDriver.b().whileTrue(new SpinAlgaeSubsystem(m_algeeSubsystem, -0.3, -0.3));
 
-    m_CommandXboxControllerDriver.a().whileTrue(new SpinAlgeeSubsystem(m_algeeSubsystem, 1, 0));
+    m_CommandXboxControllerDriver.a().whileTrue(new SpinAlgaeSubsystem(m_algeeSubsystem, 1, 0));
 
     m_climber.setDefaultCommand(new SetClimberPercentSpeed(m_climber, 0));
 
-    m_algeeSubsystem.setDefaultCommand(new SpinAlgeeSubsystem(m_algeeSubsystem, 0, 0));
+    m_algeeSubsystem.setDefaultCommand(new SpinAlgaeSubsystem(m_algeeSubsystem, 0, 0));
 
       // m_CommandXboxControllerDriver.b().whileTrue(Commands.runOnce(() -> {
 

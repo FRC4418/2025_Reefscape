@@ -7,15 +7,15 @@ package frc.robot.commands;
 import com.google.errorprone.annotations.ThreadSafe;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.AlgeeSubsystem;
+import frc.robot.subsystems.AlgaeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class SpinAlgeeSubsystem extends Command {
-  private final AlgeeSubsystem m_algeeSubsystem;
+public class SpinAlgaeSubsystem extends Command {
+  private final AlgaeSubsystem m_algeeSubsystem;
   private double intakeSpeed;
   private double shooterSpeed;
   /** Creates a new SpinAlgeeSubsystem. */
-  public SpinAlgeeSubsystem(AlgeeSubsystem algeeSubsystem, double intakeSpeed, double shooterSpeed) {
+  public SpinAlgaeSubsystem(AlgaeSubsystem algeeSubsystem, double intakeSpeed, double shooterSpeed) {
     this.m_algeeSubsystem = algeeSubsystem;
     this.intakeSpeed = intakeSpeed;
     this.shooterSpeed = shooterSpeed;

@@ -14,14 +14,14 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MotorIDs;
 
-public class AlgeeSubsystem extends SubsystemBase {
+public class AlgaeSubsystem extends SubsystemBase {
   /** Creates a new AlgeeSubsystem. */
   
-  private final SparkMax m_intakeMotor1 = new SparkMax(20, MotorType.kBrushless);
-  private final SparkMax m_intakeMotor2 = new SparkMax(21, MotorType.kBrushless);
-  private final SparkMax m_shootMotor1 = new SparkMax(23, MotorType.kBrushless);
-  private final SparkMax m_shootMotor2 = new SparkMax(24, MotorType.kBrushless);
-  public AlgeeSubsystem() {
+  private final SparkMax m_intakeMotor1 = new SparkMax(MotorIDs.leftAlgaeIntakeMotorID, MotorType.kBrushless);
+  private final SparkMax m_intakeMotor2 = new SparkMax(MotorIDs.rightAlgaeIntakeMotorID, MotorType.kBrushless);
+  private final SparkMax m_shootMotor1 = new SparkMax(MotorIDs.leftAlgaeShooterMotorID, MotorType.kBrushless);
+  private final SparkMax m_shootMotor2 = new SparkMax(MotorIDs.rightAlgaeShooterMotorID, MotorType.kBrushless);
+  public AlgaeSubsystem() {
     SparkBaseConfig invertedConfig = new SparkMaxConfig().inverted(true);
     SparkBaseConfig defautConfig = new SparkMaxConfig().inverted(false);
     m_intakeMotor1.configure(defautConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
