@@ -9,6 +9,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,11 +24,16 @@ public class AlgaeSubsystem extends SubsystemBase {
   private final SparkMax m_shootMotor1 = new SparkMax(MotorIDs.leftAlgaeShooterMotorID, MotorType.kBrushless);
   private final SparkMax m_shootMotor2 = new SparkMax(MotorIDs.rightAlgaeShooterMotorID, MotorType.kBrushless);
 
+  private final SparkMax m_wristMotor = new SparkMax(MotorIDs.algaeWristMotorID, MotorType.kBrushless);
+  private final AbsoluteEncoder m_wristAbsoluteEncoder = m_wristMotor.getAbsoluteEncoder();
+
   public AlgaeSubsystem() {
     m_intakeMotor1.configure(Configs.defautSparkConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     m_intakeMotor2.configure(Configs.invertedSparkConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     m_shootMotor1.configure(Configs.defautSparkConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     m_shootMotor2.configure(Configs.invertedSparkConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    m_wristMotor.configure(Configs.defautSparkConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public void spinShooters(double speed){
@@ -41,6 +47,13 @@ public class AlgaeSubsystem extends SubsystemBase {
   }
 
 
+  public double getWristPos(){
+    return m_wristAbsoluteEncoder.getPosition();
+  }
+
+  public void setWristPos(double speed){
+    m_wristMotor.set(speed);
+  }
 
   @Override
   public void periodic() {

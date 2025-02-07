@@ -31,6 +31,7 @@ public final class Constants {
     public static final int rightAlgaeShooterMotorID = 23;
     public static final int leftAlgaeIntakeMotorID = 20;
     public static final int rightAlgaeIntakeMotorID = 21;
+    public static final int algaeWristMotorID = 24;
   }
 
   public static final class DriveConstants {
