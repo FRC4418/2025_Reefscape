@@ -9,6 +9,7 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.util.Units;
 
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import frc.robot.Constants.AutoConstants;
@@ -16,6 +17,9 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ModuleConstants;
 
 public final class Configs {
+
+        public static final SparkBaseConfig invertedSparkConfig = new SparkMaxConfig().inverted(true);
+        public static final SparkBaseConfig defautSparkConfig = new SparkMaxConfig().inverted(false);
 
         public static final TrajectoryConfig autoTrajectoryConfig = new TrajectoryConfig(
                 AutoConstants.kMaxSpeedMetersPerSecond,

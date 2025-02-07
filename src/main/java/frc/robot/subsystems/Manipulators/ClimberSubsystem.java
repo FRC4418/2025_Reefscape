@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.Manipulators;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -33,6 +33,10 @@ public class ClimberSubsystem extends SubsystemBase {
 
   public void setPosition(double pos){
     m_controller.setReference(pos, ControlType.kPosition);
+  }
+  
+  public double getPosition(){
+    return m_encoder.getPosition();
   }
 
   public void setPercentSpeed(double percent){

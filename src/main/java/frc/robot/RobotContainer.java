@@ -38,9 +38,9 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.commands.SetClimberPercentSpeed;
 import frc.robot.commands.SetClimberPos;
 import frc.robot.commands.SpinAlgaeSubsystem;
-import frc.robot.subsystems.AlgaeSubsystem;
-import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.Drivetrain.DriveSubsystem;
+import frc.robot.subsystems.Manipulators.AlgaeSubsystem;
+import frc.robot.subsystems.Manipulators.ClimberSubsystem;
 import frc.robot.subsystems.Vision.ToAprilTag;
 import frc.robot.subsystems.Vision.VisionSubsystem;
 import frc.utils.LimelightHelpers;
@@ -96,7 +96,7 @@ public class RobotContainer {
     m_CommandXboxControllerDriver.y().whileTrue(new SetClimberPercentSpeed(m_climber, -0.1));
     m_CommandXboxControllerDriver.x().whileTrue(new SetClimberPercentSpeed(m_climber, 0.1));
 
-    m_CommandXboxControllerDriver.rightBumper().whileTrue(new SpinAlgaeSubsystem(m_algeeSubsystem, 0, 1));
+    m_CommandXboxControllerDriver.rightTrigger().whileTrue(new SpinAlgaeSubsystem(m_algeeSubsystem, 0, 1));
 
     m_CommandXboxControllerDriver.b().whileTrue(new SpinAlgaeSubsystem(m_algeeSubsystem, -0.3, -0.3));
 

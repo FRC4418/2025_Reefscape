@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.utils.LimelightHelpers;
+import frc.utils.LimelightHelpers.LimelightResults;
 
 public class DriveSubsystem extends SubsystemBase {
   // Create MAXSwerveModules
@@ -236,7 +237,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
     else if (useMegaTag2 == true)
     {
-      LimelightHelpers.SetRobotOrientation("limelight", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+      LimelightHelpers.SetRobotOrientation("limelight", getYaw(), getTurnRate(), 0, 0, 0, 0);
       LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
 
       if(mt2 == null) return;
@@ -255,6 +256,7 @@ public class DriveSubsystem extends SubsystemBase {
         m_poseEstimator.addVisionMeasurement(
             mt2.pose,
             mt2.timestampSeconds);
+        Logger.recordOutput("Odometry/Vision", LimelightHelpers.getTargetPose3d_CameraSpace("limelight"));
       }
     }
   }

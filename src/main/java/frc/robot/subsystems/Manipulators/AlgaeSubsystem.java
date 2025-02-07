@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.Manipulators;
 
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -12,6 +12,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Configs;
 import frc.robot.Constants.MotorIDs;
 
 public class AlgaeSubsystem extends SubsystemBase {
@@ -21,13 +22,12 @@ public class AlgaeSubsystem extends SubsystemBase {
   private final SparkMax m_intakeMotor2 = new SparkMax(MotorIDs.rightAlgaeIntakeMotorID, MotorType.kBrushless);
   private final SparkMax m_shootMotor1 = new SparkMax(MotorIDs.leftAlgaeShooterMotorID, MotorType.kBrushless);
   private final SparkMax m_shootMotor2 = new SparkMax(MotorIDs.rightAlgaeShooterMotorID, MotorType.kBrushless);
+
   public AlgaeSubsystem() {
-    SparkBaseConfig invertedConfig = new SparkMaxConfig().inverted(true);
-    SparkBaseConfig defautConfig = new SparkMaxConfig().inverted(false);
-    m_intakeMotor1.configure(defautConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    m_intakeMotor2.configure(defautConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    m_shootMotor1.configure(defautConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    m_shootMotor2.configure(defautConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    m_intakeMotor1.configure(Configs.defautSparkConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    m_intakeMotor2.configure(Configs.invertedSparkConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    m_shootMotor1.configure(Configs.defautSparkConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    m_shootMotor2.configure(Configs.invertedSparkConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public void spinShooters(double speed){

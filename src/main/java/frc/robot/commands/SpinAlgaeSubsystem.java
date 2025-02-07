@@ -4,10 +4,8 @@
 
 package frc.robot.commands;
 
-import com.google.errorprone.annotations.ThreadSafe;
-
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.AlgaeSubsystem;
+import frc.robot.subsystems.Manipulators.AlgaeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class SpinAlgaeSubsystem extends Command {
@@ -31,7 +29,7 @@ public class SpinAlgaeSubsystem extends Command {
   @Override
   public void execute() {
     m_algeeSubsystem.spinIntake(intakeSpeed);
-    m_algeeSubsystem.spinShooters(intakeSpeed);
+    m_algeeSubsystem.spinShooters(shooterSpeed);
   }
 
   // Called once the command ends or is interrupted.

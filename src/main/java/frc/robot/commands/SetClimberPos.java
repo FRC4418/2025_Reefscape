@@ -4,14 +4,15 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
-
-import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.Manipulators.ClimberSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class SetClimberPos extends Command {
   private final ClimberSubsystem m_climberSubsystem;
   private double pos;
+  private PIDController pidController = new PIDController(.2, 0.05, 0);
   /** Creates a new SetClimberPos. */
   public SetClimberPos(ClimberSubsystem subsystem, double pos) {
 
@@ -26,12 +27,14 @@ public class SetClimberPos extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_climberSubsystem.setPosition(pos);
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    m_climberSubsystem.setPercentSpeed(pidController.calculate(m_climberSubsystem.getPosition(), pos));
+  }
 
   // Called once the command ends or is interrupted.
   @Override
