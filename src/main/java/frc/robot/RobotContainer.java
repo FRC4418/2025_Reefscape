@@ -4,8 +4,10 @@
 
 package frc.robot;
 
+import java.lang.instrument.Instrumentation;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -38,6 +40,7 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.commands.SetClimberPercentSpeed;
 import frc.robot.commands.SetClimberPos;
 import frc.robot.commands.SpinAlgaeSubsystem;
+import frc.robot.commands.ToggleCommand;
 import frc.robot.subsystems.Drivetrain.DriveSubsystem;
 import frc.robot.subsystems.Manipulators.AlgaeSubsystem;
 import frc.robot.subsystems.Manipulators.ClimberSubsystem;
@@ -46,6 +49,10 @@ import frc.robot.subsystems.Vision.VisionSubsystem;
 import frc.utils.LimelightHelpers;
 
 public class RobotContainer {
+
+  public boolean coralMode = true;
+
+  BooleanSupplier modeSupplier = () -> coralMode;
   
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
@@ -92,9 +99,18 @@ public class RobotContainer {
 
 
   private void configureBindings() {
+    m_CommandXboxControllerDriver.rightBumper().onTrue(new RunCommand(() -> {coralMode = true;}));
+    m_CommandXboxControllerDriver.leftBumper().onTrue(new RunCommand(() -> {coralMode = false;}));
+    SmartDashboard.putBoolean("Coral Mode", coralMode);
+
+    Command com1 = new InstantCommand(() -> System.out.println(1));
+    Command com2 = new InstantCommand(() -> System.out.println(2));
+
+    
+    
+    m_CommandXboxControllerDriver.x().whileTrue(new ToggleCommand(com1, com2, modeSupplier));
+
     // m_CommandXboxControllerDriver.a().onTrue(new InstantCommand(() -> m_robotDrive.zeroHeading()));
-    m_CommandXboxControllerDriver.y().whileTrue(new SetClimberPercentSpeed(m_climber, -0.1));
-    m_CommandXboxControllerDriver.x().whileTrue(new SetClimberPercentSpeed(m_climber, 0.1));
 
     m_CommandXboxControllerDriver.rightTrigger().whileTrue(new SpinAlgaeSubsystem(m_algeeSubsystem, 0, 1));
 

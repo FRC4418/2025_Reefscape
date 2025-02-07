@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -26,6 +27,10 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   private final SparkMax m_wristMotor = new SparkMax(MotorIDs.algaeWristMotorID, MotorType.kBrushless);
   private final AbsoluteEncoder m_wristAbsoluteEncoder = m_wristMotor.getAbsoluteEncoder();
+
+  private final SparkMax m_leftElevatorMotor = new SparkMax(MotorIDs.leftAlgaeElevatorMotorID, MotorType.kBrushless);
+  private final SparkMax m_rightElevatorMotor = new SparkMax(MotorIDs.rightAlgaeElevatorMotorID, MotorType.kBrushless);
+  private final RelativeEncoder m_elevatorEncoder = m_leftElevatorMotor.getEncoder();
 
   public AlgaeSubsystem() {
     m_intakeMotor1.configure(Configs.defautSparkConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -46,13 +51,21 @@ public class AlgaeSubsystem extends SubsystemBase {
     m_intakeMotor2.set(speed);
   }
 
-
   public double getWristPos(){
     return m_wristAbsoluteEncoder.getPosition();
   }
 
-  public void setWristPos(double speed){
+  public void setWristPercentOutput(double speed){
     m_wristMotor.set(speed);
+  }
+
+  public double getElevatorPos(){
+    return m_elevatorEncoder.getPosition();
+  }
+
+  public void setElevatorPercentOutput(double speed){
+    m_leftElevatorMotor.set(speed);
+    m_rightElevatorMotor.set(speed);
   }
 
   @Override
