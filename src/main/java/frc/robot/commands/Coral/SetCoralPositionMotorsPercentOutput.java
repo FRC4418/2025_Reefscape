@@ -2,38 +2,35 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.Coral;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Manipulators.ClimberSubsystem;
+import frc.robot.subsystems.Manipulators.AlgaeSubsystem;
+import frc.robot.subsystems.Manipulators.CoralSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class SetClimberPos extends Command {
-  private final ClimberSubsystem m_climberSubsystem;
-  private double pos;
-  private PIDController pidController = new PIDController(.2, 0.05, 0);
-  /** Creates a new SetClimberPos. */
-  public SetClimberPos(ClimberSubsystem subsystem, double pos) {
-
-    m_climberSubsystem = subsystem;
-
-    this.pos = pos;
-
-    addRequirements(m_climberSubsystem);
+public class SetCoralPositionMotorsPercentOutput extends Command {
+  private CoralSubsystem m_coralSubsystem;
+  double elevatorPercent;
+  double wristPercent;
+  /** Creates a new SetAlgaePositionMotorsPercentOutput. */
+  public SetCoralPositionMotorsPercentOutput(CoralSubsystem coralSubsystem, double elevatorPercent, double wristPercent) {
+    this.elevatorPercent = elevatorPercent;
+    this.wristPercent = wristPercent;
+    m_coralSubsystem = coralSubsystem;
+    addRequirements(coralSubsystem);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_climberSubsystem.setPercentSpeed(pidController.calculate(m_climberSubsystem.getPosition(), pos));
+    m_coralSubsystem.setWristPercentOutput(wristPercent);
+    m_coralSubsystem.setElevatorPercentOutput(elevatorPercent);
   }
 
   // Called once the command ends or is interrupted.

@@ -37,32 +37,38 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.SetClimberPercentSpeed;
-import frc.robot.commands.SetClimberPos;
-import frc.robot.commands.SpinAlgaeSubsystem;
 import frc.robot.commands.ToggleCommand;
+import frc.robot.commands.Algae.SetAlgaeIntakePercentSpeed;
+import frc.robot.commands.Algae.SetAlgaePosition;
+import frc.robot.commands.Algae.SetAlgaePositionMotorsPercentOutput;
+import frc.robot.commands.Climber.SetClimberPercentSpeed;
+import frc.robot.commands.Climber.SetClimberPos;
+import frc.robot.commands.Coral.SetCoralIntakePercentSpeed;
+import frc.robot.commands.Coral.SetCoralPosition;
+import frc.robot.commands.Coral.SetCoralPositionMotorsPercentOutput;
 import frc.robot.subsystems.Drivetrain.DriveSubsystem;
 import frc.robot.subsystems.Manipulators.AlgaeSubsystem;
 import frc.robot.subsystems.Manipulators.ClimberSubsystem;
+import frc.robot.subsystems.Manipulators.CoralSubsystem;
 import frc.robot.subsystems.Vision.ToAprilTag;
 import frc.robot.subsystems.Vision.VisionSubsystem;
+import frc.robot.subsystems.ModeController;
 import frc.utils.LimelightHelpers;
 
 public class RobotContainer {
-
-  public boolean coralMode = true;
-
-  BooleanSupplier modeSupplier = () -> coralMode;
   
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
-  // private final VisionSubsystem m_vision = new VisionSubsystem();
+  private final VisionSubsystem m_vision = new VisionSubsystem();
 
   private final ClimberSubsystem m_climber = new ClimberSubsystem();
 
-  private final AlgaeSubsystem m_algeeSubsystem = new AlgaeSubsystem();
+  // private final AlgaeSubsystem m_algeeSubsystem = new AlgaeSubsystem();
 
-  // private final ToAprilTag toAprilTag = new ToAprilTag(m_vision, m_robotDrive);
+  // private final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
+
+  private final ModeController m_modeController = new ModeController();
+
 
 
   XboxController m_driverController = new XboxController(0);
@@ -97,32 +103,53 @@ public class RobotContainer {
   }
 
 
+  // public Command selectedManipulatorToPosCommand(double elevatorPos, double wristPose){
+  //   Command coralCmd = new SetCoralPosition(m_coralSubsystem, elevatorPos, wristPose);
+  //   Command algaeCmd = new SetAlgaePosition(m_algeeSubsystem, elevatorPos, wristPose);
+
+  //   return new ToggleCommand(coralCmd, algaeCmd, modeSupplier);
+  // }
 
   private void configureBindings() {
-    m_CommandXboxControllerDriver.rightBumper().onTrue(new RunCommand(() -> {coralMode = true;}));
-    m_CommandXboxControllerDriver.leftBumper().onTrue(new RunCommand(() -> {coralMode = false;}));
-    SmartDashboard.putBoolean("Coral Mode", coralMode);
-
     Command com1 = new InstantCommand(() -> System.out.println(1));
     Command com2 = new InstantCommand(() -> System.out.println(2));
 
+    // Command outTake = new ToggleCommand(new SetCoralIntakePercentSpeed(m_coralSubsystem, 1), new SetAlgaeIntakePercentSpeed(m_algeeSubsystem, 0, 1), modeSupplier);
+
+    m_CommandXboxControllerDriver.rightBumper().whileTrue(new RunCommand(() -> {
+      m_modeController.setCoralMode(true); 
+      // System.out.println(m_modeController.isInCoralMode());
+    }));
+
+    m_CommandXboxControllerDriver.leftBumper().whileTrue(new RunCommand(() -> {
+      m_modeController.setCoralMode(false); 
+      // System.out.println(m_modeController.isInCoralMode());
+    }));
+
+    m_CommandXboxControllerDriver.a().whileTrue(new RunCommand(() -> {
+      System.out.println(m_modeController.isInCoralMode());
+    }));
     
-    
-    m_CommandXboxControllerDriver.x().whileTrue(new ToggleCommand(com1, com2, modeSupplier));
 
-    // m_CommandXboxControllerDriver.a().onTrue(new InstantCommand(() -> m_robotDrive.zeroHeading()));
+    m_CommandXboxControllerDriver.x().whileTrue(new ToggleCommand(com1, com2, m_modeController));
 
-    m_CommandXboxControllerDriver.rightTrigger().whileTrue(new SpinAlgaeSubsystem(m_algeeSubsystem, 0, 1));
+    // // m_CommandXboxControllerDriver.a().onTrue(new InstantCommand(() -> m_robotDrive.zeroHeading()));
 
-    m_CommandXboxControllerDriver.b().whileTrue(new SpinAlgaeSubsystem(m_algeeSubsystem, -0.3, -0.3));
+    // m_CommandXboxControllerDriver.rightTrigger().whileTrue(new SetAlgaeIntakePercentSpeed(m_algeeSubsystem, 0, 1));
 
-    m_CommandXboxControllerDriver.a().whileTrue(new SpinAlgaeSubsystem(m_algeeSubsystem, 1, 0));
+    // m_CommandXboxControllerDriver.b().whileTrue(new SetAlgaeIntakePercentSpeed(m_algeeSubsystem, -0.3, -0.3));
+
+    // m_CommandXboxControllerDriver.a().whileTrue(new SetAlgaeIntakePercentSpeed(m_algeeSubsystem, 1, 0));
 
     m_climber.setDefaultCommand(new SetClimberPercentSpeed(m_climber, 0));
 
-    m_algeeSubsystem.setDefaultCommand(new SpinAlgaeSubsystem(m_algeeSubsystem, 0, 0));
+    // m_algeeSubsystem.setDefaultCommand(new SetAlgaeIntakePercentSpeed(m_algeeSubsystem, 0, 0).alongWith(new SetAlgaePositionMotorsPercentOutput(m_algeeSubsystem, 0, 0)));
 
-      // m_CommandXboxControllerDriver.b().whileTrue(Commands.runOnce(() -> {
+    // m_coralSubsystem.setDefaultCommand(new SetCoralIntakePercentSpeed(m_coralSubsystem, 0).alongWith(new SetCoralPositionMotorsPercentOutput(m_coralSubsystem, 0, 0)));
+      
+    
+    
+    // m_CommandXboxControllerDriver.b().whileTrue(Commands.runOnce(() -> {
 
 
     //   Pose2d tagPose = m_vision.pose3dRobotRelative().toPose2d();

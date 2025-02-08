@@ -25,13 +25,72 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  public static final class ManipulatorGearRatios {
+    public static double kAlgaeWristRatio = 1/50d;
+    public static double kCoralWristRatio = 1/50d;
+  }
+
+  public static final class ManipulatorPositions {
+    public static double kCoralElevatorPosIntake = 5;
+    public static double kCoralElevatorPosL4 = 15;
+    public static double kCoralElevatorPosL3 = 10;
+    public static double kCoralElevatorPosL2 = 5;
+    public static double kCoralElevatorPosL1 = 0;
+
+    public static double kCoralWristPosIntake = -0.959931088597;
+    public static double kCoralWristPosL4 = 2.18166156499;
+    public static double kCoralWristPosL2or3 = 2.18166156499;
+    public static double kCoralWristPosL1 = 1.57254165605;
+    
+
+    public static double kAlgaeElevatorPosTop = 12.5;
+    public static double kAlgaeElevatorPosBottom = 7.5;
+    public static double kAlgaeElevatorPosProcesser = 2.5;
+
+    public static double kAlgaeWristPosIntake =  -0.610865238198;
+  }
+
+  public static final class PIDConstants {
+    public static double kElevatorP = 0.2;
+    public static double kElevatorI = 0.02;
+    public static double kElevatorD = 0;
+
+    public static double kClimberP = 0.2;
+    public static double kClimberI = 0.02;
+    public static double kClimberD = 0;
+
+    public static double kAlgaeWristP = 0.2;
+    public static double kAlgaeWristI = 0.02;
+    public static double kAlgaeWristD = 0;
+
+    public static double kCoralWristP = 0.2;
+    public static double kCoralWristI = 0.02;
+    public static double kCoralWristD = 0;
+
+    public static double kAlgaeElevatorStall = 0.3;
+    public static double kCoralElevatorStall = 0.2;
+
+    public static double kAlgaeWristrStallMulti = 0.1;
+    public static double kCoralWristrStallMulti = 0.1;
+  }
+
   public static final class MotorIDs {
     public static final int climberMotorID = 30;
+
+
     public static final int leftAlgaeShooterMotorID = 22;
     public static final int rightAlgaeShooterMotorID = 23;
     public static final int leftAlgaeIntakeMotorID = 20;
     public static final int rightAlgaeIntakeMotorID = 21;
     public static final int algaeWristMotorID = 24;
+    public static final int leftAlgaeElevatorMotorID = 25;
+    public static final int rightAlgaeElevatorMotorID = 26;
+
+    public static final int coralMotorID = 10;
+    public static final int coralWristMotorID = 11;
+    public static final int leftCoralElevatorMotorID = 12;
+    public static final int rightCoralElevatorMotorID = 13;
   }
 
   public static final class DriveConstants {
@@ -154,11 +213,5 @@ public final class Constants {
 
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
-  }
-  public static final class armPositions {
-    public static final double Position1 = 4;
-    public static final double Position2 = 5;
-    public static final double Position3 = 6;
-    public static final double Position4 = 7;
   }
 }

@@ -15,6 +15,7 @@ import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
+import frc.robot.Constants.ManipulatorGearRatios;
 import frc.robot.Constants.MotorIDs;
 
 public class AlgaeSubsystem extends SubsystemBase {
@@ -52,7 +53,7 @@ public class AlgaeSubsystem extends SubsystemBase {
   }
 
   public double getWristPos(){
-    return m_wristAbsoluteEncoder.getPosition();
+    return m_wristAbsoluteEncoder.getPosition() * 2 * Math.PI;
   }
 
   public void setWristPercentOutput(double speed){
