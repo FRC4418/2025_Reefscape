@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Percent;
+
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -11,9 +13,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class RobotStateController extends SubsystemBase {
   private boolean coralMode;
   private LedSubsystem m_ledSubsystem;
+  
 
-  private LEDPattern coralLEDPattern = LEDPattern.solid(new Color(200, 200, 200));
-  private LEDPattern algaeLEDPattern = LEDPattern.solid(new Color(255, 0, 200));
+  private LEDPattern coralLEDPattern = LEDPattern.solid(new Color(255, 255, 0));
+  private LEDPattern algaeLEDPattern = LEDPattern.solid(new Color(255, 0, 100));
 
   /** Creates a new ModeController. */
   public RobotStateController(LedSubsystem ledSubsystem) {

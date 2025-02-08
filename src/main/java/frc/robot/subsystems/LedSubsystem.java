@@ -32,6 +32,7 @@ public class LedSubsystem extends SubsystemBase {
   // private LEDPattern green = LEDPattern.solid(new Color(0, 255, 0));
   private LEDPattern blue = LEDPattern.solid(new Color(175, 0, 255));
 
+  private static final Distance kLedSpacing = Meters.of(1 / 120.0);
 
   private LEDPattern rainbow = LEDPattern.rainbow(255, 255);
 
@@ -39,6 +40,7 @@ public class LedSubsystem extends SubsystemBase {
 
   /** Creates a new LedSubsystem. */
   public LedSubsystem() {
+    rainbow = rainbow.scrollAtAbsoluteSpeed(MetersPerSecond.of(.1), kLedSpacing);
     m_led.setLength(ledBuffer.getLength());
     setPattern(red);
   }

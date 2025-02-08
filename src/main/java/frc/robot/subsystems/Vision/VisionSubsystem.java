@@ -12,11 +12,11 @@ public class VisionSubsystem extends SubsystemBase {
   /** Creates a new VisionSubsystem. */
   public VisionSubsystem() {}
 
-  public Pose3d pose3dCameraRelative(){
+  public Pose3d targetPose3dCameraRelative(){
     return LimelightHelpers.getTargetPose3d_CameraSpace("limelight");
   }
 
-  public Pose3d pose3dRobotRelative(){
+  public Pose3d targetPose3dRobotRelative(){
     return LimelightHelpers.getTargetPose3d_CameraSpace("limelight");
   }
 

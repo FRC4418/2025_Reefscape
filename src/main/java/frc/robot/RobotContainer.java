@@ -42,6 +42,7 @@ import frc.robot.commands.ToggleCommand;
 import frc.robot.commands.Algae.SetAlgaeIntakePercentSpeed;
 import frc.robot.commands.Algae.SetAlgaePosition;
 import frc.robot.commands.Algae.SetAlgaePositionMotorsPercentOutput;
+import frc.robot.commands.Auto.DriveToPose;
 import frc.robot.commands.Climber.SetClimberPercentSpeed;
 import frc.robot.commands.Climber.SetClimberPos;
 import frc.robot.commands.Coral.SetCoralIntakePercentSpeed;
@@ -51,7 +52,6 @@ import frc.robot.subsystems.Drivetrain.DriveSubsystem;
 import frc.robot.subsystems.Manipulators.AlgaeSubsystem;
 import frc.robot.subsystems.Manipulators.ClimberSubsystem;
 import frc.robot.subsystems.Manipulators.CoralSubsystem;
-import frc.robot.subsystems.Vision.ToAprilTag;
 import frc.robot.subsystems.Vision.VisionSubsystem;
 import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.RobotStateController;
@@ -98,14 +98,7 @@ public class RobotContainer {
 
     // PathfindingCommand.warmupCommand().schedule();
 
-    SmartDashboard.putData("Pathfind to Pickup Pos", AutoBuilder.pathfindToPose(
-      new Pose2d(10, 0, Rotation2d.fromDegrees(0)), 
-      new PathConstraints(
-        4.0, 4.0, 
-        Units.degreesToRadians(360), Units.degreesToRadians(540)
-      ), 
-      0
-    ));
+    // SmartDashboard.putData("Pathfind to Origin", new DriveToPose(m_robotDrive, new Pose2d()));
   }
 
 
@@ -132,9 +125,8 @@ public class RobotContainer {
       // System.out.println(m_modeController.isInCoralMode());
     }));
 
-    m_CommandXboxControllerDriver.a().whileTrue(new RunCommand(() -> {
-      System.out.println(m_robotStateController.isInCoralMode());
-    }));
+
+    m_CommandXboxControllerDriver.a().toggleOnTrue(new DriveToPose(m_robotDrive, new Pose2d()));
     
 
     m_CommandXboxControllerDriver.x().whileTrue(new ToggleCommand(com1, com2, m_robotStateController));
