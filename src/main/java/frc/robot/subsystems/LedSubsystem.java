@@ -4,6 +4,18 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Centimeters;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Percent;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
+
+import edu.wpi.first.units.TimeUnit;
+import edu.wpi.first.units.UnitBuilder;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Frequency;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -16,12 +28,16 @@ public class LedSubsystem extends SubsystemBase {
   private AddressableLED m_led = new AddressableLED(3);
   private AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(300);
 
-  private LEDPattern red = LEDPattern.solid(new Color(255, 0, 0));
-  private LEDPattern green = LEDPattern.solid(new Color(0, 255, 0));
-  private LEDPattern blue = LEDPattern.solid(new Color(255, 0, 255));
+  private LEDPattern red = LEDPattern.solid(new Color(0, 255, 0));
+  // private LEDPattern green = LEDPattern.solid(new Color(0, 255, 0));
+  private LEDPattern blue = LEDPattern.solid(new Color(0, 0, 255));
+
+
+  private LEDPattern enabledPattern = LEDPattern.rainbow(255, 255);
 
   /** Creates a new LedSubsystem. */
   public LedSubsystem() {
+    m_led.setLength(ledBuffer.getLength());
     setPattern(red);
   }
 
@@ -32,13 +48,17 @@ public class LedSubsystem extends SubsystemBase {
     m_led.start();
   }
 
+  public void setEnabledPattern(LEDPattern pattern){
+    enabledPattern = pattern;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     if(DriverStation.isTeleopEnabled()){
-      setPattern(green);
+      setPattern(enabledPattern);
     }else if(DriverStation.isAutonomousEnabled()){
-      setPattern(blue);
+      setPattern(blue.breathe(Seconds.of(.5)));
     }else{
       setPattern(red);
     }

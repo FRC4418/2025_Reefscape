@@ -8,28 +8,27 @@ import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
-import frc.robot.subsystems.ModeController;
+import frc.robot.subsystems.RobotStateController;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ToggleCommand extends Command {
   private Command command1;
   private Command command2;
   private Command mainCommand;
-  private ModeController mode;
-  private boolean hasRan = false;
+  private RobotStateController m_stateController;
   /** Creates a new ToggleCommand. */
-  public ToggleCommand(Command command1, Command command2, ModeController mode) {
+  public ToggleCommand(Command command1, Command command2, RobotStateController state) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.command1 = command1;
     this.command2 = command2;
-    this.mode = mode;
-    addRequirements(mode);
+    this.m_stateController = state;
+    addRequirements(state);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    mainCommand = mode.isInCoralMode() ? command1 : command2;
+    mainCommand = m_stateController.isInCoralMode() ? command1 : command2;
     mainCommand.schedule();
   }
 

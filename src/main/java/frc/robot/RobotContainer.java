@@ -29,6 +29,7 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -52,7 +53,8 @@ import frc.robot.subsystems.Manipulators.ClimberSubsystem;
 import frc.robot.subsystems.Manipulators.CoralSubsystem;
 import frc.robot.subsystems.Vision.ToAprilTag;
 import frc.robot.subsystems.Vision.VisionSubsystem;
-import frc.robot.subsystems.ModeController;
+import frc.robot.subsystems.LedSubsystem;
+import frc.robot.subsystems.RobotStateController;
 import frc.utils.LimelightHelpers;
 
 public class RobotContainer {
@@ -63,11 +65,13 @@ public class RobotContainer {
 
   private final ClimberSubsystem m_climber = new ClimberSubsystem();
 
+  private final LedSubsystem m_led = new LedSubsystem();
+
   // private final AlgaeSubsystem m_algeeSubsystem = new AlgaeSubsystem();
 
   // private final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
 
-  private final ModeController m_modeController = new ModeController();
+  private final RobotStateController m_robotStateController = new RobotStateController(m_led);
 
 
 
@@ -76,6 +80,8 @@ public class RobotContainer {
   CommandXboxController m_CommandXboxControllerDriver = new CommandXboxController(0);
 
   public RobotContainer() {
+
+    m_led.setPattern(LEDPattern.rainbow(255, 255));
 
     DataLogManager.start();
 
@@ -117,21 +123,21 @@ public class RobotContainer {
     // Command outTake = new ToggleCommand(new SetCoralIntakePercentSpeed(m_coralSubsystem, 1), new SetAlgaeIntakePercentSpeed(m_algeeSubsystem, 0, 1), modeSupplier);
 
     m_CommandXboxControllerDriver.rightBumper().whileTrue(new RunCommand(() -> {
-      m_modeController.setCoralMode(true); 
+      m_robotStateController.setCoralMode(true); 
       // System.out.println(m_modeController.isInCoralMode());
     }));
 
     m_CommandXboxControllerDriver.leftBumper().whileTrue(new RunCommand(() -> {
-      m_modeController.setCoralMode(false); 
+      m_robotStateController.setCoralMode(false); 
       // System.out.println(m_modeController.isInCoralMode());
     }));
 
     m_CommandXboxControllerDriver.a().whileTrue(new RunCommand(() -> {
-      System.out.println(m_modeController.isInCoralMode());
+      System.out.println(m_robotStateController.isInCoralMode());
     }));
     
 
-    m_CommandXboxControllerDriver.x().whileTrue(new ToggleCommand(com1, com2, m_modeController));
+    m_CommandXboxControllerDriver.x().whileTrue(new ToggleCommand(com1, com2, m_robotStateController));
 
     // // m_CommandXboxControllerDriver.a().onTrue(new InstantCommand(() -> m_robotDrive.zeroHeading()));
 
