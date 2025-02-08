@@ -12,8 +12,8 @@ public class RobotStateController extends SubsystemBase {
   private boolean coralMode;
   private LedSubsystem m_ledSubsystem;
 
-  private LEDPattern coralLEDPattern = LEDPattern.solid(new Color(255, 255, 255));
-  private LEDPattern algaeLEDPattern = LEDPattern.solid(new Color(255, 0, 255));
+  private LEDPattern coralLEDPattern = LEDPattern.solid(new Color(200, 200, 200));
+  private LEDPattern algaeLEDPattern = LEDPattern.solid(new Color(255, 0, 200));
 
   /** Creates a new ModeController. */
   public RobotStateController(LedSubsystem ledSubsystem) {

@@ -30,8 +30,10 @@ public class LedSubsystem extends SubsystemBase {
 
   private LEDPattern red = LEDPattern.solid(new Color(0, 255, 0));
   // private LEDPattern green = LEDPattern.solid(new Color(0, 255, 0));
-  private LEDPattern blue = LEDPattern.solid(new Color(0, 0, 255));
+  private LEDPattern blue = LEDPattern.solid(new Color(175, 0, 255));
 
+
+  private LEDPattern rainbow = LEDPattern.rainbow(255, 255);
 
   private LEDPattern enabledPattern = LEDPattern.rainbow(255, 255);
 
@@ -60,7 +62,7 @@ public class LedSubsystem extends SubsystemBase {
     }else if(DriverStation.isAutonomousEnabled()){
       setPattern(blue.breathe(Seconds.of(.5)));
     }else{
-      setPattern(red);
+      setPattern(rainbow);
     }
   }
 }
