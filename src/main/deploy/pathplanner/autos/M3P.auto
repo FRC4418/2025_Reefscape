@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "M1P"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "M1.5P"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "M2P"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "M2.5P"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "M3P"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Middle Start",
+  "choreoAuto": false
+}

@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "T1P"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "T1.5P"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "T2P"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "T2.5P"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "T3P"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Top Start",
+  "choreoAuto": false
+}
