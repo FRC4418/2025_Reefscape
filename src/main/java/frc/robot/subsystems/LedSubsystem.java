@@ -40,7 +40,7 @@ public class LedSubsystem extends SubsystemBase {
 
   /** Creates a new LedSubsystem. */
   public LedSubsystem() {
-    rainbow = rainbow.scrollAtAbsoluteSpeed(MetersPerSecond.of(.1), kLedSpacing);
+    rainbow = rainbow.scrollAtAbsoluteSpeed(MetersPerSecond.of(.25), kLedSpacing);
     m_led.setLength(ledBuffer.getLength());
     setPattern(red);
   }

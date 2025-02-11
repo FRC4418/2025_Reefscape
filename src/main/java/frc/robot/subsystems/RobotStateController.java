@@ -13,9 +13,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class RobotStateController extends SubsystemBase {
   private boolean coralMode;
   private LedSubsystem m_ledSubsystem;
+
+  
   
 
-  private LEDPattern coralLEDPattern = LEDPattern.solid(new Color(255, 255, 0));
+  private LEDPattern coralLEDPattern = LEDPattern.solid(new Color(0, 0, 0));
   private LEDPattern algaeLEDPattern = LEDPattern.solid(new Color(255, 0, 100));
 
   /** Creates a new ModeController. */
