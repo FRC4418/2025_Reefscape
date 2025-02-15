@@ -67,11 +67,12 @@ public class RobotContainer {
 
   private final LedSubsystem m_led = new LedSubsystem();
 
+
   // private final AlgaeSubsystem m_algeeSubsystem = new AlgaeSubsystem();
 
   // private final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
 
-  private final RobotStateController m_robotStateController = new RobotStateController(m_led);
+  private final RobotStateController m_robotStateController = new RobotStateController(m_led, m_robotDrive);
 
 
 
@@ -125,8 +126,15 @@ public class RobotContainer {
       // System.out.println(m_modeController.isInCoralMode());
     }));
 
+    
 
-    m_CommandXboxControllerDriver.a().toggleOnTrue(new DriveToPose(m_robotDrive, new Pose2d()));
+    SmartDashboard.putData("Reset Gyro", new InstantCommand( () -> m_robotDrive.zeroHeading() ));
+
+    SmartDashboard.putData("Reset Pose Estimation", new InstantCommand( () -> m_robotDrive.resetPoseEstimation() ));
+
+    m_CommandXboxControllerDriver.y().onTrue(new InstantCommand( () -> m_robotDrive.zeroTeleopHeading()));
+
+    m_CommandXboxControllerDriver.a().toggleOnTrue(new DriveToPose(m_robotDrive, new Pose2d(10.5,4, Rotation2d.fromDegrees(180))));
     
 
     m_CommandXboxControllerDriver.x().whileTrue(new ToggleCommand(com1, com2, m_robotStateController));

@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.events.CancelCommandEvent;
+import com.pathplanner.lib.events.EventScheduler;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -40,7 +42,7 @@ public class DriveToPose extends Command {
 
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(poses);
 
-    PathConstraints constraints = new PathConstraints(3, 1, 2 * Math.PI, 4 * Math.PI);
+    PathConstraints constraints = new PathConstraints(2, 1.5, 2 * Math.PI, 4 * Math.PI);
 
     var path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0, endPose.getRotation()));
 
@@ -56,6 +58,7 @@ public class DriveToPose extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    driveCommand.cancel();
     driveCommand.end(interrupted);
   }
 

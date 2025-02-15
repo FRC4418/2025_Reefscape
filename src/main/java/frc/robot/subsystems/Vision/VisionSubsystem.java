@@ -23,6 +23,7 @@ public class VisionSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // System.out.println(LimelightHelpers.getTargetPose3d_CameraSpace("limelight-three"));
     // This method will be called once per scheduler run
   }
 }

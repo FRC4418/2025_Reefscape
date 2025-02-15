@@ -7,6 +7,9 @@ package frc.robot;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -25,6 +28,41 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  public static final class FieldPositions {
+    private static double alignDistance = 2.5;
+
+    private static double angledXOffset = .5 * alignDistance;
+
+    private static double angledYoffset = 0.866025403784 * alignDistance;
+
+
+    public static Pose2d[] ABPose = {
+      new Pose2d(4.5 - alignDistance,4, Rotation2d.fromDegrees(0)),
+      new Pose2d(13. + alignDistance,4, Rotation2d.fromDegrees(180))
+    };
+    public static Pose2d[] CDPose = {
+      new Pose2d(4.5 - angledXOffset, 4 - angledYoffset, Rotation2d.fromDegrees(60)),
+      new Pose2d(13. + angledXOffset, 4 + angledYoffset, Rotation2d.fromDegrees(180+60))
+    };
+    public static Pose2d[] EFPose = {
+      new Pose2d(4.5 + angledXOffset,4 - angledYoffset, Rotation2d.fromDegrees(120)),
+      new Pose2d(13. - angledXOffset,4 + angledYoffset, Rotation2d.fromDegrees(180+120))
+    };
+    public static Pose2d[] GHPose = {
+      new Pose2d(4.5 + alignDistance,4, Rotation2d.fromDegrees(180)),
+      new Pose2d(13. - alignDistance,4, Rotation2d.fromDegrees(0))
+    };
+    public static Pose2d[] IJPose = {
+      new Pose2d(4.5 + angledXOffset,4 + angledYoffset, Rotation2d.fromDegrees(-120)),
+      new Pose2d(13. - angledXOffset,4 - angledYoffset, Rotation2d.fromDegrees(180-120))
+    };
+    public static Pose2d[] KLPose = {
+      new Pose2d(4.5 - angledXOffset,4 + angledYoffset, Rotation2d.fromDegrees(-60)),
+      new Pose2d(13. + angledXOffset,4 - angledYoffset, Rotation2d.fromDegrees(180-60))
+    };
+
+  }
 
   public static final class ManipulatorGearRatios {
     public static double kAlgaeWristRatio = 1/50d;
