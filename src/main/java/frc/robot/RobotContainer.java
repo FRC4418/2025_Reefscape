@@ -4,10 +4,14 @@
 
 package frc.robot;
 
+import java.io.IOException;
 import java.lang.instrument.Instrumentation;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
+
+import org.json.simple.parser.ParseException;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -17,6 +21,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.pathfinding.Pathfinder;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.util.FileVersionException;
 
 import choreo.trajectory.Trajectory;
 import edu.wpi.first.math.MathUtil;
@@ -31,18 +36,21 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.FieldPositions;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.ToggleCommand;
 import frc.robot.commands.Algae.SetAlgaeIntakePercentSpeed;
 import frc.robot.commands.Algae.SetAlgaePosition;
 import frc.robot.commands.Algae.SetAlgaePositionMotorsPercentOutput;
 import frc.robot.commands.Auto.DriveToPose;
+import frc.robot.commands.Auto.DriveToTarget;
 import frc.robot.commands.Climber.SetClimberPercentSpeed;
 import frc.robot.commands.Climber.SetClimberPos;
 import frc.robot.commands.Coral.SetCoralIntakePercentSpeed;
@@ -76,9 +84,14 @@ public class RobotContainer {
 
 
 
-  XboxController m_driverController = new XboxController(0);
+  private XboxController m_driverController = new XboxController(0);
 
-  CommandXboxController m_CommandXboxControllerDriver = new CommandXboxController(0);
+  private CommandXboxController m_CommandXboxControllerDriver = new CommandXboxController(0);
+  
+  private CommandXboxController m_CommandXboxControllerOther = new CommandXboxController(1);
+
+
+  private SendableChooser<Command> chooser = new SendableChooser<Command>();
 
   public RobotContainer() {
 
@@ -97,22 +110,17 @@ public class RobotContainer {
 
     configureBindings();
 
-    // PathfindingCommand.warmupCommand().schedule();
-
-    // SmartDashboard.putData("Pathfind to Origin", new DriveToPose(m_robotDrive, new Pose2d()));
+    addAutoOptions();
   }
 
-
-  // public Command selectedManipulatorToPosCommand(double elevatorPos, double wristPose){
-  //   Command coralCmd = new SetCoralPosition(m_coralSubsystem, elevatorPos, wristPose);
-  //   Command algaeCmd = new SetAlgaePosition(m_algeeSubsystem, elevatorPos, wristPose);
-
-  //   return new ToggleCommand(coralCmd, algaeCmd, modeSupplier);
-  // }
-
   private void configureBindings() {
-    Command com1 = new InstantCommand(() -> System.out.println(1));
-    Command com2 = new InstantCommand(() -> System.out.println(2));
+
+    m_CommandXboxControllerOther.povDown().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.ABPose[1])));
+    m_CommandXboxControllerOther.rightBumper().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.CDPose[1])));
+    m_CommandXboxControllerOther.rightTrigger().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.EFPose[1])));
+    m_CommandXboxControllerOther.povUp().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.GHPose[1])));
+    m_CommandXboxControllerOther.leftTrigger().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.IJPose[1])));
+    m_CommandXboxControllerOther.leftBumper().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.KLPose[1])));
 
     // Command outTake = new ToggleCommand(new SetCoralIntakePercentSpeed(m_coralSubsystem, 1), new SetAlgaeIntakePercentSpeed(m_algeeSubsystem, 0, 1), modeSupplier);
 
@@ -134,10 +142,10 @@ public class RobotContainer {
 
     m_CommandXboxControllerDriver.y().onTrue(new InstantCommand( () -> m_robotDrive.zeroTeleopHeading()));
 
-    m_CommandXboxControllerDriver.a().toggleOnTrue(new DriveToPose(m_robotDrive, new Pose2d(10.5,4, Rotation2d.fromDegrees(180))));
-    
+    m_CommandXboxControllerDriver.a().toggleOnTrue(new DriveToTarget(m_robotDrive, m_robotStateController));
 
-    m_CommandXboxControllerDriver.x().whileTrue(new ToggleCommand(com1, com2, m_robotStateController));
+
+
 
     // // m_CommandXboxControllerDriver.a().onTrue(new InstantCommand(() -> m_robotDrive.zeroHeading()));
 
@@ -152,66 +160,45 @@ public class RobotContainer {
     // m_algeeSubsystem.setDefaultCommand(new SetAlgaeIntakePercentSpeed(m_algeeSubsystem, 0, 0).alongWith(new SetAlgaePositionMotorsPercentOutput(m_algeeSubsystem, 0, 0)));
 
     // m_coralSubsystem.setDefaultCommand(new SetCoralIntakePercentSpeed(m_coralSubsystem, 0).alongWith(new SetCoralPositionMotorsPercentOutput(m_coralSubsystem, 0, 0)));
-      
-    
-    
-    // m_CommandXboxControllerDriver.b().whileTrue(Commands.runOnce(() -> {
-
-
-    //   Pose2d tagPose = m_vision.pose3dRobotRelative().toPose2d();
-
-    //   var poses = new ArrayList<Pose2d>();
-    //   poses.add(m_robotDrive.getPose());
-    //   Pose3d targetPose3d = m_vision.pose3dRobotRelative();
-
-    //   // Pose2d targetPose = new Pose2d(-targetPose3d.getZ() + 1,-targetPose3d.getX(),m_robotDrive.getPose().getRotation());
-    //   Pose2d targetPose = new Pose2d(1,0.2,new Rotation2d());
-
-    //   Transform2d desiredTransform = new Transform2d(new Pose2d(), targetPose);
-    //   Pose2d endPose = m_robotDrive.getPose().transformBy(desiredTransform);
-    //   poses.add(endPose);
-
-
-
-
-    //   System.out.println(tagPose.toString());
-
-    //   List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(poses);
-
-    //   PathConstraints constraints = new PathConstraints(4, 1, 2 * Math.PI, 4 * Math.PI);
-
-    //   var path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0, new Rotation2d()));
-    //   path.preventFlipping = true;
-
-
-
-    //   // AutoBuilder.pathfindToPose(endPose, constraints,0d).schedule();;
-
-    //   AutoBuilder.followPath(path).schedule();
-    // }));
   }
 
+  public void addAutoOptions(){
+    chooser.addOption("None", new InstantCommand());
 
+    chooser.setDefaultOption("test", getTestCommand());
+
+    SmartDashboard.putData("Auto Selector", chooser);
+  }
+
+  public PathPlannerPath getPath(String name){
+    try {
+      var path =  PathPlannerPath.fromPathFile(name);
+
+
+      var alliance = DriverStation.getAlliance();
+      if (alliance.isPresent()) {
+        if (alliance.get() == DriverStation.Alliance.Red) return path.flipPath();
+      }
+
+      return path;
+
+    } catch (FileVersionException | IOException | ParseException e) {
+      return null;
+    }
+  }
+
+  public Command getTestCommand(){
+
+    PathPlannerPath path = getPath("test");
+
+    Command drivePath = AutoBuilder.followPath(path);
+
+    Command resetPose = new InstantCommand(() -> m_robotDrive.resetOdometry(path.getStartingDifferentialPose()));
+
+    return resetPose.andThen(drivePath);
+  }
 
   public Command getAutonomousCommand() {
-    try{
-        // Load the path you want to follow using its name in the GUI
-      PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory("New Path");
-
-      // var path = PathPlannerPath.fromPathFile("Example Path");
-
-      var traj = path.generateTrajectory(m_robotDrive.getRobotRelativeSpeeds(), m_robotDrive.getPose().getRotation(), m_robotDrive.config);
-      
-
-
-
-        // Create a path following command using AutoBuilder. This will also trigger event markers.
-      return new InstantCommand(()->m_robotDrive.resetOdometry(path.getStartingDifferentialPose())).andThen(AutoBuilder.followPath(path));
-
-    } catch (Exception e) {
-
-      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
-      return Commands.none();
-    }
+    return chooser.getSelected();
   }
 }

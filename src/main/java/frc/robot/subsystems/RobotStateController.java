@@ -6,17 +6,23 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Percent;
 
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.FieldPositions;
 import frc.robot.subsystems.Drivetrain.DriveSubsystem;
 
 public class RobotStateController extends SubsystemBase {
   private boolean coralMode;
   private LedSubsystem m_ledSubsystem;
   private DriveSubsystem m_robotDrive;
+
+  private Pose2d targetPose2d = FieldPositions.GHPose[1];
 
   
   
@@ -51,6 +57,15 @@ public class RobotStateController extends SubsystemBase {
     }
   }
 
+  public void setTargetPose(Pose2d pose){
+    targetPose2d = pose;
+  }
+
+
+  public Pose2d getTargetPose(){
+    return targetPose2d;
+  }
+
   public boolean isInCoralMode(){
     return coralMode;
   }
@@ -59,5 +74,6 @@ public class RobotStateController extends SubsystemBase {
   public void periodic() {
     // System.out.println(coralMode);
     // This method will be called once per scheduler run
+    Logger.recordOutput("Target Pose", targetPose2d);
   }
 }

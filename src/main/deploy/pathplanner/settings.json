@@ -2,7 +2,10 @@
   "robotWidth": 0.9,
   "robotLength": 0.9,
   "holonomicMode": true,
-  "pathFolders": [],
+  "pathFolders": [
+    "Two Piece",
+    "Single Piece"
+  ],
   "autoFolders": [],
   "defaultMaxVel": 4.0,
   "defaultMaxAccel": 3.0,
@@ -29,8 +32,8 @@
   "bumperOffsetX": 0.0,
   "bumperOffsetY": 0.0,
   "robotFeatures": [
-    "{\"name\":\"Rectangle\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.3,\"y\":0.0},\"size\":{\"width\":0.7,\"length\":0.1},\"borderRadius\":0.0,\"strokeWidth\":0.02,\"filled\":true}}",
-    "{\"name\":\"Rectangle\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":-0.3,\"y\":0.0},\"size\":{\"width\":0.7,\"length\":0.1},\"borderRadius\":0.0,\"strokeWidth\":0.02,\"filled\":true}}",
+    "{\"name\":\"Rectangle\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.0,\"y\":0.3},\"size\":{\"width\":0.1,\"length\":0.7},\"borderRadius\":0.0,\"strokeWidth\":0.02,\"filled\":true}}",
+    "{\"name\":\"Rectangle\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":-0.0,\"y\":-0.3},\"size\":{\"width\":0.1,\"length\":0.7},\"borderRadius\":0.0,\"strokeWidth\":0.02,\"filled\":true}}",
     "{\"name\":\"Line\",\"type\":\"line\",\"data\":{\"start\":{\"x\":0.3,\"y\":0.0},\"end\":{\"x\":0.6,\"y\":0.0},\"strokeWidth\":0.02}}",
     "{\"name\":\"Line\",\"type\":\"line\",\"data\":{\"start\":{\"x\":-0.3,\"y\":0.0},\"end\":{\"x\":-0.6,\"y\":0.0},\"strokeWidth\":0.02}}"
   ]
