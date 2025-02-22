@@ -30,7 +30,29 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
 
   public static final class FieldPositions {
+
     private static double alignDistance = 2.5;
+
+    private static double robotCenterToBumperEdge = .876/2;
+
+    private static double robotCenterToCoralOffset = .343;
+
+    private static double coralPoleOffset = .329;
+
+    private static double reefWidth = 1.663;
+
+    private static double scoreMovementVerticalTravel = (alignDistance - (reefWidth/2))  - robotCenterToBumperEdge;
+
+    private static double leftScoreTravel = (-coralPoleOffset/2) + robotCenterToCoralOffset;
+
+    private static double rightScoreTravel = (coralPoleOffset/2) + robotCenterToCoralOffset;
+
+    public static Transform2d leftScoreTransform = new Transform2d(leftScoreTravel, scoreMovementVerticalTravel, new Rotation2d());
+
+    public static Transform2d rightScoreTransform = new Transform2d(rightScoreTravel, scoreMovementVerticalTravel, new Rotation2d());
+
+
+
 
     private static double angledXOffset = .5 * alignDistance;
 

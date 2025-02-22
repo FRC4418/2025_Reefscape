@@ -78,7 +78,7 @@ public class RobotContainer {
 
   // private final AlgaeSubsystem m_algeeSubsystem = new AlgaeSubsystem();
 
-  // private final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
+  private final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
 
   private final RobotStateController m_robotStateController = new RobotStateController(m_led, m_robotDrive);
 
@@ -144,7 +144,7 @@ public class RobotContainer {
 
     m_CommandXboxControllerDriver.a().toggleOnTrue(new DriveToTarget(m_robotDrive, m_robotStateController));
 
-
+    m_CommandXboxControllerDriver.x().whileTrue(new SetCoralIntakePercentSpeed(m_coralSubsystem, 1));
 
 
     // // m_CommandXboxControllerDriver.a().onTrue(new InstantCommand(() -> m_robotDrive.zeroHeading()));
@@ -159,7 +159,7 @@ public class RobotContainer {
 
     // m_algeeSubsystem.setDefaultCommand(new SetAlgaeIntakePercentSpeed(m_algeeSubsystem, 0, 0).alongWith(new SetAlgaePositionMotorsPercentOutput(m_algeeSubsystem, 0, 0)));
 
-    // m_coralSubsystem.setDefaultCommand(new SetCoralIntakePercentSpeed(m_coralSubsystem, 0).alongWith(new SetCoralPositionMotorsPercentOutput(m_coralSubsystem, 0, 0)));
+    m_coralSubsystem.setDefaultCommand(new SetCoralIntakePercentSpeed(m_coralSubsystem, 0).alongWith(new SetCoralPositionMotorsPercentOutput(m_coralSubsystem, 0, 0)));
   }
 
   public void addAutoOptions(){

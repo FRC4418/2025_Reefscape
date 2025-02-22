@@ -402,9 +402,6 @@ public class DriveSubsystem extends SubsystemBase {
    * @return the robot's heading in degrees, from -180 to 180
    */
 
-  public double getYaw(){
-    return m_gyro.getAngle() * (DriveConstants.kGyroReversed ? -1 : 1) + absoluteGyroOffset;
-  }
 
   public double getDriveYaw(){
     return getYaw() + teleopGyroOffset;
@@ -431,4 +428,8 @@ public class DriveSubsystem extends SubsystemBase {
     return m_gyro.getRate() * (DriveConstants.kGyroReversed ? -1 : 1);
   }
 
+  
+  public double getYaw(){
+    return m_gyro.getAngle() * (DriveConstants.kGyroReversed ? -1 : 1) + absoluteGyroOffset;
+  }
 }
