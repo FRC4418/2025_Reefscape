@@ -55,6 +55,7 @@ import frc.robot.commands.Auto.DriveToPose;
 import frc.robot.commands.Auto.DriveToTarget;
 import frc.robot.commands.Climber.SetClimberPercentSpeed;
 import frc.robot.commands.Climber.SetClimberPos;
+import frc.robot.commands.Coral.CoralDefault;
 import frc.robot.commands.Coral.SetCoralIntakePercentSpeed;
 import frc.robot.commands.Coral.SetCoralPosition;
 import frc.robot.commands.Coral.SetCoralPositionMotorsPercentOutput;
@@ -156,25 +157,15 @@ public class RobotContainer {
     m_CommandXboxControllerDriver.povUp().whileTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL4, ManipulatorPositions.kCoralWristPosL4));
     m_CommandXboxControllerDriver.povRight().whileTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL3, ManipulatorPositions.kCoralWristPosL3));
     m_CommandXboxControllerDriver.povLeft().whileTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL2, ManipulatorPositions.kCoralWristPosL2));
-
-
     m_CommandXboxControllerDriver.povDown().whileTrue(new SetCoralPosition(m_coralSubsystem, 0.1, 0.2));
 
     m_CommandXboxControllerDriver.leftTrigger().whileTrue(new SetCoralPosition(m_coralSubsystem, 64, 0.02));
-
-    // // m_CommandXboxControllerDriver.a().onTrue(new InstantCommand(() -> m_robotDrive.zeroHeading()));
-
-    // m_CommandXboxControllerDriver.rightTrigger().whileTrue(new SetAlgaeIntakePercentSpeed(m_algeeSubsystem, 0, 1));
-
-    // m_CommandXboxControllerDriver.b().whileTrue(new SetAlgaeIntakePercentSpeed(m_algeeSubsystem, -0.3, -0.3));
-
-    // m_CommandXboxControllerDriver.a().whileTrue(new SetAlgaeIntakePercentSpeed(m_algeeSubsystem, 1, 0));
 
     m_climber.setDefaultCommand(new SetClimberPercentSpeed(m_climber, 0));
 
     // m_algeeSubsystem.setDefaultCommand(new SetAlgaeIntakePercentSpeed(m_algeeSubsystem, 0, 0).alongWith(new SetAlgaePositionMotorsPercentOutput(m_algeeSubsystem, 0, 0)));
 
-    m_coralSubsystem.setDefaultCommand(new SetCoralIntakePercentSpeed(m_coralSubsystem, 0).alongWith(new SetCoralPositionMotorsPercentOutput(m_coralSubsystem, 0, 0)));
+    m_coralSubsystem.setDefaultCommand(new CoralDefault(m_coralSubsystem));
   }
 
   public void addAutoOptions(){

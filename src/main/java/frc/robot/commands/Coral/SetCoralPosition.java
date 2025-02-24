@@ -5,6 +5,8 @@
 package frc.robot.commands.Coral;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.PIDConstants;
@@ -16,8 +18,15 @@ public class SetCoralPosition extends Command {
   private CoralSubsystem m_coralSubsystem;
   private double elevatorPos;
   private double wristPose;
-  private PIDController elevatorPIDController = new PIDController(PIDConstants.kElevatorP, PIDConstants.kElevatorI, PIDConstants.kElevatorD);
+  // private PIDController elevatorPIDController = new PIDController(PIDConstants.kElevatorP, PIDConstants.kElevatorI, PIDConstants.kElevatorD);
+
+  private TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(PIDConstants.kCoralWristMaxVel, PIDConstants.kCoralWristMaxAccel);
+
+  private ProfiledPIDController elevatorPIDController = new ProfiledPIDController(PIDConstants.kCoralWristP, PIDConstants.kCoralWristI, PIDConstants.kCoralWristD, constraints);
+
   private PIDController wristPIDController = new PIDController(PIDConstants.kCoralWristP, PIDConstants.kCoralWristI, PIDConstants.kCoralWristD);
+  
+  
   public SetCoralPosition(CoralSubsystem coralSubsystem, double elevatorPos, double wristPose) {
     this.elevatorPos = elevatorPos;
     this.wristPose = wristPose;

@@ -125,15 +125,20 @@ public final class Constants {
     public static double kAlgaeWristI = 0.02;
     public static double kAlgaeWristD = 0;
 
+    public static double kAlgaeElevatorStall = 0.3;
+
+    public static double kAlgaeWristrStallMulti = 0.1;
+
+
     public static double kCoralWristP = 1;
     public static double kCoralWristI = 0.05;
     public static double kCoralWristD = 0.05;
 
-    public static double kAlgaeElevatorStall = 0.3;
+    public static double kCoralWristMaxVel = 0.2;
+    public static double kCoralWristMaxAccel = 0.1;
 
     public static double kCoralElevatorStall = 0.05;
 
-    public static double kAlgaeWristrStallMulti = 0.1;
     public static double kCoralWristrStallMulti = 0.07;
   }
 
@@ -141,13 +146,13 @@ public final class Constants {
     public static final int climberMotorID = 30;
 
 
-    public static final int leftAlgaeShooterMotorID = 22;
-    public static final int rightAlgaeShooterMotorID = 23;
-    public static final int leftAlgaeIntakeMotorID = 20;
-    public static final int rightAlgaeIntakeMotorID = 21;
-    public static final int algaeWristMotorID = 24;
-    public static final int leftAlgaeElevatorMotorID = 25;
-    public static final int rightAlgaeElevatorMotorID = 26;
+    // public static final int leftAlgaeShooterMotorID = 22;
+    // public static final int rightAlgaeShooterMotorID = 23;
+    public static final int leftAlgaeIntakeMotorID = 9;
+    public static final int rightAlgaeIntakeMotorID = 10;
+    public static final int algaeWristMotorID = 11;
+    public static final int leftAlgaeElevatorMotorID = 30;
+    public static final int rightAlgaeElevatorMotorID = 31;
 
     public static final int coralMotorID = 41;
     public static final int coralWristMotorID = 40;
