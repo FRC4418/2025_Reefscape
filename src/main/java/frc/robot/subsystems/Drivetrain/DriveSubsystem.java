@@ -142,6 +142,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    SmartDashboard.putNumber("gryo", getYaw());
     
     SmartDashboard.putNumber("teleop gyro offset", teleopGyroOffset);
     SmartDashboard.putNumber("pose est gyro offset", poseEstimationGyroOffset);
@@ -265,8 +267,8 @@ public class DriveSubsystem extends SubsystemBase {
     }
     else if (useMegaTag2 == true)
     {
-      LimelightHelpers.SetRobotOrientation("limelight-three", getPose().getRotation().getDegrees(), getTurnRate(), 0, 0, 0, 0);
-      LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-three");
+      LimelightHelpers.SetRobotOrientation("limelight-four", getPose().getRotation().getDegrees(), getTurnRate(), 0, 0, 0, 0);
+      LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-four");
 
       
 

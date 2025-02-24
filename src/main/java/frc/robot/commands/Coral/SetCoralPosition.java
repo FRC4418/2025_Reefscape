@@ -5,6 +5,7 @@
 package frc.robot.commands.Coral;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.PIDConstants;
 import frc.robot.subsystems.Manipulators.CoralSubsystem;
@@ -34,10 +35,19 @@ public class SetCoralPosition extends Command {
   public void execute() {
     double elevatorPIDvalue = elevatorPIDController.calculate(m_coralSubsystem.getElevatorPos(), elevatorPos);
     double wristPIDValue = wristPIDController.calculate(m_coralSubsystem.getWristPos(), wristPose);
-    double wristStall = Math.cos(m_coralSubsystem.getWristPos()) * PIDConstants.kCoralWristrStallMulti;
+    double wristStall = Math.cos(2*Math.PI*(m_coralSubsystem.getWristPos()-0.1)) * PIDConstants.kCoralWristrStallMulti;
 
-    m_coralSubsystem.setElevatorPercentOutput(elevatorPIDvalue + PIDConstants.kCoralElevatorStall);
     m_coralSubsystem.setWristPercentOutput(wristPIDValue + wristStall);
+
+
+    // SmartDashboard.putNumber("command wrist pose", m_coralSubsystem.getWristPos());
+    // SmartDashboard.putNumber("command wrist pid out", wristPIDValue);
+
+    if(elevatorPos - 2 < m_coralSubsystem.getElevatorPos()  || m_coralSubsystem.getElevatorPos() < elevatorPIDvalue + 2){
+      m_coralSubsystem.setElevatorPercentOutput(elevatorPIDvalue);// + PIDConstants.kCoralElevatorStall);
+    }else{
+      m_coralSubsystem.setPosFancy(elevatorPos);
+    }
   }
 
   // Called once the command ends or is interrupted.

@@ -15,7 +15,7 @@ public class SetCoralIntakePercentSpeed extends Command {
   public SetCoralIntakePercentSpeed(CoralSubsystem coralSubsystem, double speed) {
     this.speed = speed;
     m_coralSubsystem = coralSubsystem;
-    addRequirements(coralSubsystem);
+    // addRequirements(coralSubsystem);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 

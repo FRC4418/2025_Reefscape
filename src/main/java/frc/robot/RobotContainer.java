@@ -44,11 +44,13 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.FieldPositions;
+import frc.robot.Constants.ManipulatorPositions;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.ToggleCommand;
 import frc.robot.commands.Algae.SetAlgaeIntakePercentSpeed;
 import frc.robot.commands.Algae.SetAlgaePosition;
 import frc.robot.commands.Algae.SetAlgaePositionMotorsPercentOutput;
+import frc.robot.commands.Auto.AutoScore;
 import frc.robot.commands.Auto.DriveToPose;
 import frc.robot.commands.Auto.DriveToTarget;
 import frc.robot.commands.Climber.SetClimberPercentSpeed;
@@ -122,6 +124,8 @@ public class RobotContainer {
     m_CommandXboxControllerOther.leftTrigger().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.IJPose[1])));
     m_CommandXboxControllerOther.leftBumper().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.KLPose[1])));
 
+    m_CommandXboxControllerOther.povLeft().onTrue(new InstantCommand( () -> m_robotStateController.setScoreTransform(true)));
+    m_CommandXboxControllerOther.povRight().onTrue(new InstantCommand( () -> m_robotStateController.setScoreTransform(false)));
     // Command outTake = new ToggleCommand(new SetCoralIntakePercentSpeed(m_coralSubsystem, 1), new SetAlgaeIntakePercentSpeed(m_algeeSubsystem, 0, 1), modeSupplier);
 
     m_CommandXboxControllerDriver.rightBumper().whileTrue(new RunCommand(() -> {
@@ -140,12 +144,23 @@ public class RobotContainer {
 
     SmartDashboard.putData("Reset Pose Estimation", new InstantCommand( () -> m_robotDrive.resetPoseEstimation() ));
 
-    m_CommandXboxControllerDriver.y().onTrue(new InstantCommand( () -> m_robotDrive.zeroTeleopHeading()));
+    // m_CommandXboxControllerDriver.y().onTrue(new InstantCommand( () -> m_robotDrive.zeroTeleopHeading()));
+    m_CommandXboxControllerDriver.y().whileTrue(new SetCoralPositionMotorsPercentOutput(m_coralSubsystem, 0, 0.07));
 
-    m_CommandXboxControllerDriver.a().toggleOnTrue(new DriveToTarget(m_robotDrive, m_robotStateController));
+    m_CommandXboxControllerDriver.a().toggleOnTrue(new AutoScore(m_robotDrive, m_coralSubsystem, m_robotStateController));
 
     m_CommandXboxControllerDriver.x().whileTrue(new SetCoralIntakePercentSpeed(m_coralSubsystem, 1));
 
+    m_CommandXboxControllerDriver.b().whileTrue(new SetCoralIntakePercentSpeed(m_coralSubsystem, -1));
+
+    m_CommandXboxControllerDriver.povUp().whileTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL4, ManipulatorPositions.kCoralWristPosL4));
+    m_CommandXboxControllerDriver.povRight().whileTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL3, ManipulatorPositions.kCoralWristPosL3));
+    m_CommandXboxControllerDriver.povLeft().whileTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL2, ManipulatorPositions.kCoralWristPosL2));
+
+
+    m_CommandXboxControllerDriver.povDown().whileTrue(new SetCoralPosition(m_coralSubsystem, 0.1, 0.2));
+
+    m_CommandXboxControllerDriver.leftTrigger().whileTrue(new SetCoralPosition(m_coralSubsystem, 64, 0.02));
 
     // // m_CommandXboxControllerDriver.a().onTrue(new InstantCommand(() -> m_robotDrive.zeroHeading()));
 

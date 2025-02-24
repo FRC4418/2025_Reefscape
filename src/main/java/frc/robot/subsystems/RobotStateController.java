@@ -9,11 +9,13 @@ import static edu.wpi.first.units.Units.Percent;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.FieldPositions;
 import frc.robot.subsystems.Drivetrain.DriveSubsystem;
 
@@ -23,6 +25,8 @@ public class RobotStateController extends SubsystemBase {
   private DriveSubsystem m_robotDrive;
 
   private Pose2d targetPose2d = FieldPositions.GHPose[1];
+
+  private Transform2d scoreMovementTransform = new Transform2d();
 
   
   
@@ -57,6 +61,14 @@ public class RobotStateController extends SubsystemBase {
     }
   }
 
+  public void setScoreTransform(boolean left){
+    scoreMovementTransform = (left ? Constants.FieldPositions.leftScoreTransform :  Constants.FieldPositions.rightScoreTransform);
+  }
+
+  public Transform2d getScoreTransform(){
+    return scoreMovementTransform;
+  }
+
   public void setTargetPose(Pose2d pose){
     targetPose2d = pose;
   }
@@ -75,5 +87,7 @@ public class RobotStateController extends SubsystemBase {
     // System.out.println(coralMode);
     // This method will be called once per scheduler run
     Logger.recordOutput("Target Pose", targetPose2d);
+
+    Logger.recordOutput("Score Pose", targetPose2d.transformBy(scoreMovementTransform));
   }
 }

@@ -20,6 +20,7 @@ public final class Configs {
         public static final SparkBaseConfig invertedSparkConfig = new SparkMaxConfig().inverted(true);
         public static final SparkBaseConfig defautSparkConfig = new SparkMaxConfig().inverted(false);
 
+
         public static final TrajectoryConfig autoTrajectoryConfig = new TrajectoryConfig(
                 AutoConstants.kMaxSpeedMetersPerSecond,
                 AutoConstants.kMaxAccelerationMetersPerSecondSquared)

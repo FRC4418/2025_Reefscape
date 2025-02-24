@@ -5,12 +5,15 @@
 package frc.robot.subsystems.Vision;
 
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.utils.LimelightHelpers;
 
 public class VisionSubsystem extends SubsystemBase {
   /** Creates a new VisionSubsystem. */
-  public VisionSubsystem() {}
+  public VisionSubsystem() {
+    LimelightHelpers.SetIMUMode("limelight-four", 0);
+  }
 
   public Pose3d targetPose3dCameraRelative(){
     return LimelightHelpers.getTargetPose3d_CameraSpace("limelight");
@@ -23,6 +26,11 @@ public class VisionSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if(DriverStation.isDisabled()){
+      LimelightHelpers.setPipelineIndex("limelight-four", 1);
+    }else{
+      LimelightHelpers.setPipelineIndex("limelight-four", 0);
+    }
     // System.out.println(LimelightHelpers.getTargetPose3d_CameraSpace("limelight-three"));
     // This method will be called once per scheduler run
   }

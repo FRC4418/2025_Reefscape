@@ -41,15 +41,15 @@ public final class Constants {
 
     private static double reefWidth = 1.663;
 
-    private static double scoreMovementVerticalTravel = (alignDistance - (reefWidth/2))  - robotCenterToBumperEdge;
+    private static double scoreMovementVerticalTravel = (alignDistance - (reefWidth)) + .4;//- robotCenterToBumperEdge;
 
     private static double leftScoreTravel = (-coralPoleOffset/2) + robotCenterToCoralOffset;
 
     private static double rightScoreTravel = (coralPoleOffset/2) + robotCenterToCoralOffset;
 
-    public static Transform2d leftScoreTransform = new Transform2d(leftScoreTravel, scoreMovementVerticalTravel, new Rotation2d());
+    public static Transform2d leftScoreTransform = new Transform2d(scoreMovementVerticalTravel, leftScoreTravel, new Rotation2d());
 
-    public static Transform2d rightScoreTransform = new Transform2d(rightScoreTravel, scoreMovementVerticalTravel, new Rotation2d());
+    public static Transform2d rightScoreTransform = new Transform2d(scoreMovementVerticalTravel, rightScoreTravel, new Rotation2d());
 
 
 
@@ -93,14 +93,15 @@ public final class Constants {
 
   public static final class ManipulatorPositions {
     public static double kCoralElevatorPosIntake = 5;
-    public static double kCoralElevatorPosL4 = 15;
-    public static double kCoralElevatorPosL3 = 10;
-    public static double kCoralElevatorPosL2 = 5;
+    public static double kCoralElevatorPosL4 = 123;
+    public static double kCoralElevatorPosL3 = 76;
+    public static double kCoralElevatorPosL2 = 40;
     public static double kCoralElevatorPosL1 = 0;
 
     public static double kCoralWristPosIntake = -0.959931088597;
-    public static double kCoralWristPosL4 = 2.18166156499;
-    public static double kCoralWristPosL2or3 = 2.18166156499;
+    public static double kCoralWristPosL4 = 0.395;
+    public static double kCoralWristPosL3 = .415;
+    public static double kCoralWristPosL2 = .415;
     public static double kCoralWristPosL1 = 1.57254165605;
     
 
@@ -112,8 +113,8 @@ public final class Constants {
   }
 
   public static final class PIDConstants {
-    public static double kElevatorP = 0.2;
-    public static double kElevatorI = 0.02;
+    public static double kElevatorP = 0.05;
+    public static double kElevatorI = 0;
     public static double kElevatorD = 0;
 
     public static double kClimberP = 0.2;
@@ -124,15 +125,16 @@ public final class Constants {
     public static double kAlgaeWristI = 0.02;
     public static double kAlgaeWristD = 0;
 
-    public static double kCoralWristP = 0.2;
-    public static double kCoralWristI = 0.02;
-    public static double kCoralWristD = 0;
+    public static double kCoralWristP = 1;
+    public static double kCoralWristI = 0.05;
+    public static double kCoralWristD = 0.05;
 
     public static double kAlgaeElevatorStall = 0.3;
-    public static double kCoralElevatorStall = 0.2;
+
+    public static double kCoralElevatorStall = 0.05;
 
     public static double kAlgaeWristrStallMulti = 0.1;
-    public static double kCoralWristrStallMulti = 0.1;
+    public static double kCoralWristrStallMulti = 0.07;
   }
 
   public static final class MotorIDs {
@@ -147,10 +149,10 @@ public final class Constants {
     public static final int leftAlgaeElevatorMotorID = 25;
     public static final int rightAlgaeElevatorMotorID = 26;
 
-    public static final int coralMotorID = 10;
-    public static final int coralWristMotorID = 11;
-    public static final int leftCoralElevatorMotorID = 12;
-    public static final int rightCoralElevatorMotorID = 13;
+    public static final int coralMotorID = 41;
+    public static final int coralWristMotorID = 40;
+    public static final int leftCoralElevatorMotorID = 20;
+    public static final int rightCoralElevatorMotorID = 21;
   }
 
   public static final class DriveConstants {
@@ -188,13 +190,13 @@ public final class Constants {
 
     // SPARK MAX CAN IDs
     public static final int kFrontLeftDrivingCanId = 2;
-    public static final int kRearLeftDrivingCanId = 8;
-    public static final int kFrontRightDrivingCanId = 4;
+    public static final int kRearLeftDrivingCanId = 4;
+    public static final int kFrontRightDrivingCanId = 8;
     public static final int kRearRightDrivingCanId = 6;
 
     public static final int kFrontLeftTurningCanId = 1;
-    public static final int kRearLeftTurningCanId = 7;
-    public static final int kFrontRightTurningCanId = 3;
+    public static final int kRearLeftTurningCanId = 3;
+    public static final int kFrontRightTurningCanId = 7;
     public static final int kRearRightTurningCanId = 5;
 
     public static final boolean kGyroReversed = true;
