@@ -4,8 +4,14 @@
 
 package frc.robot;
 
+import java.io.IOException;
+import java.lang.instrument.Instrumentation;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
+
+import org.json.simple.parser.ParseException;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -15,6 +21,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.pathfinding.Pathfinder;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.util.FileVersionException;
 
 import choreo.trajectory.Trajectory;
 import edu.wpi.first.math.MathUtil;
@@ -27,17 +34,38 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.FieldPositions;
+import frc.robot.Constants.ManipulatorPositions;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.ToggleCommand;
+import frc.robot.commands.Algae.SetAlgaeIntakePercentSpeed;
+import frc.robot.commands.Algae.SetAlgaePosition;
+import frc.robot.commands.Algae.SetAlgaePositionMotorsPercentOutput;
+import frc.robot.commands.Auto.AutoScore;
+import frc.robot.commands.Auto.DriveToPose;
+import frc.robot.commands.Auto.DriveToTarget;
+import frc.robot.commands.Climber.SetClimberPercentSpeed;
+import frc.robot.commands.Climber.SetClimberPos;
+import frc.robot.commands.Coral.CoralDefault;
+import frc.robot.commands.Coral.SetCoralIntakePercentSpeed;
+import frc.robot.commands.Coral.SetCoralPosition;
+import frc.robot.commands.Coral.SetCoralPositionMotorsPercentOutput;
 import frc.robot.subsystems.Drivetrain.DriveSubsystem;
-import frc.robot.subsystems.Vision.ToAprilTag;
+import frc.robot.subsystems.Manipulators.AlgaeSubsystem;
+import frc.robot.subsystems.Manipulators.ClimberSubsystem;
+import frc.robot.subsystems.Manipulators.CoralSubsystem;
 import frc.robot.subsystems.Vision.VisionSubsystem;
+import frc.robot.subsystems.LedSubsystem;
+import frc.robot.subsystems.RobotStateController;
 import frc.utils.LimelightHelpers;
 
 public class RobotContainer {
@@ -46,15 +74,31 @@ public class RobotContainer {
 
   private final VisionSubsystem m_vision = new VisionSubsystem();
 
+  private final ClimberSubsystem m_climber = new ClimberSubsystem();
 
-  private final ToAprilTag toAprilTag = new ToAprilTag(m_vision, m_robotDrive);
+  private final LedSubsystem m_led = new LedSubsystem();
 
 
-  XboxController m_driverController = new XboxController(0);
+  // private final AlgaeSubsystem m_algeeSubsystem = new AlgaeSubsystem();
 
-  CommandXboxController m_CommandXboxControllerDriver = new CommandXboxController(0);
+  private final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
+
+  private final RobotStateController m_robotStateController = new RobotStateController(m_led, m_robotDrive);
+
+
+
+  private XboxController m_driverController = new XboxController(0);
+
+  private CommandXboxController m_CommandXboxControllerDriver = new CommandXboxController(0);
+  
+  private CommandXboxController m_CommandXboxControllerOther = new CommandXboxController(1);
+
+
+  private SendableChooser<Command> chooser = new SendableChooser<Command>();
 
   public RobotContainer() {
+
+    m_led.setPattern(LEDPattern.rainbow(255, 255));
 
     DataLogManager.start();
 
@@ -69,80 +113,97 @@ public class RobotContainer {
 
     configureBindings();
 
-    // PathfindingCommand.warmupCommand().schedule();
-
-    SmartDashboard.putData("Pathfind to Pickup Pos", AutoBuilder.pathfindToPose(
-      new Pose2d(10, 0, Rotation2d.fromDegrees(0)), 
-      new PathConstraints(
-        4.0, 4.0, 
-        Units.degreesToRadians(360), Units.degreesToRadians(540)
-      ), 
-      0
-    ));
+    addAutoOptions();
   }
-
-
 
   private void configureBindings() {
-    m_CommandXboxControllerDriver.a().onTrue(new InstantCommand(() -> m_robotDrive.zeroHeading()));
 
-    m_CommandXboxControllerDriver.b().whileTrue(Commands.runOnce(() -> {
+    m_CommandXboxControllerOther.povDown().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.ABPose[1])));
+    m_CommandXboxControllerOther.rightBumper().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.CDPose[1])));
+    m_CommandXboxControllerOther.rightTrigger().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.EFPose[1])));
+    m_CommandXboxControllerOther.povUp().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.GHPose[1])));
+    m_CommandXboxControllerOther.leftTrigger().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.IJPose[1])));
+    m_CommandXboxControllerOther.leftBumper().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.KLPose[1])));
 
+    m_CommandXboxControllerOther.povLeft().onTrue(new InstantCommand( () -> m_robotStateController.setScoreTransform(true)));
+    m_CommandXboxControllerOther.povRight().onTrue(new InstantCommand( () -> m_robotStateController.setScoreTransform(false)));
+    // Command outTake = new ToggleCommand(new SetCoralIntakePercentSpeed(m_coralSubsystem, 1), new SetAlgaeIntakePercentSpeed(m_algeeSubsystem, 0, 1), modeSupplier);
 
-      Pose2d tagPose = m_vision.pose3dRobotRelative().toPose2d();
-
-      var poses = new ArrayList<Pose2d>();
-      poses.add(m_robotDrive.getPose());
-      Pose3d targetPose3d = m_vision.pose3dRobotRelative();
-
-      // Pose2d targetPose = new Pose2d(-targetPose3d.getZ() + 1,-targetPose3d.getX(),m_robotDrive.getPose().getRotation());
-      Pose2d targetPose = new Pose2d(1,0.2,new Rotation2d());
-
-      Transform2d desiredTransform = new Transform2d(new Pose2d(), targetPose);
-      Pose2d endPose = m_robotDrive.getPose().transformBy(desiredTransform);
-      poses.add(endPose);
-
-
-
-
-      System.out.println(tagPose.toString());
-
-      List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(poses);
-
-      PathConstraints constraints = new PathConstraints(4, 1, 2 * Math.PI, 4 * Math.PI);
-
-      var path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0, new Rotation2d()));
-      path.preventFlipping = true;
-
-
-
-      // AutoBuilder.pathfindToPose(endPose, constraints,0d).schedule();;
-
-      AutoBuilder.followPath(path).schedule();
+    m_CommandXboxControllerDriver.rightBumper().whileTrue(new RunCommand(() -> {
+      m_robotStateController.setCoralMode(true); 
+      // System.out.println(m_modeController.isInCoralMode());
     }));
+
+    m_CommandXboxControllerDriver.leftBumper().whileTrue(new RunCommand(() -> {
+      m_robotStateController.setCoralMode(false); 
+      // System.out.println(m_modeController.isInCoralMode());
+    }));
+
+    
+
+    SmartDashboard.putData("Reset Gyro", new InstantCommand( () -> m_robotDrive.zeroHeading() ));
+
+    SmartDashboard.putData("Reset Pose Estimation", new InstantCommand( () -> m_robotDrive.resetPoseEstimation() ));
+
+    // m_CommandXboxControllerDriver.y().onTrue(new InstantCommand( () -> m_robotDrive.zeroTeleopHeading()));
+
+    m_CommandXboxControllerDriver.a().toggleOnTrue(new AutoScore(m_robotDrive, m_coralSubsystem, m_robotStateController));
+
+    m_CommandXboxControllerDriver.x().whileTrue(new SetCoralIntakePercentSpeed(m_coralSubsystem, 1));
+
+    m_CommandXboxControllerDriver.b().whileTrue(new SetCoralIntakePercentSpeed(m_coralSubsystem, -1));
+
+    m_CommandXboxControllerDriver.povUp().whileTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL4, ManipulatorPositions.kCoralWristPosL4));
+    m_CommandXboxControllerDriver.povRight().whileTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL3, ManipulatorPositions.kCoralWristPosL3));
+    m_CommandXboxControllerDriver.povLeft().whileTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL2, ManipulatorPositions.kCoralWristPosL2));
+    m_CommandXboxControllerDriver.povDown().whileTrue(new SetCoralPosition(m_coralSubsystem, 0.1, 0.2));
+
+    m_CommandXboxControllerDriver.leftTrigger().whileTrue(new SetCoralPosition(m_coralSubsystem, 64, 0.02));
+
+    m_climber.setDefaultCommand(new SetClimberPercentSpeed(m_climber, 0));
+
+    // m_algeeSubsystem.setDefaultCommand(new SetAlgaeIntakePercentSpeed(m_algeeSubsystem, 0, 0).alongWith(new SetAlgaePositionMotorsPercentOutput(m_algeeSubsystem, 0, 0)));
+
+    m_coralSubsystem.setDefaultCommand(new SetCoralPositionMotorsPercentOutput(m_coralSubsystem, 0, 0).alongWith(new SetCoralIntakePercentSpeed(m_coralSubsystem, 0)));
   }
 
+  public void addAutoOptions(){
+    chooser.addOption("None", new InstantCommand());
 
+    chooser.setDefaultOption("test", getTestCommand());
+
+    SmartDashboard.putData("Auto Selector", chooser);
+  }
+
+  public PathPlannerPath getPath(String name){
+    try {
+      var path =  PathPlannerPath.fromPathFile(name);
+
+
+      var alliance = DriverStation.getAlliance();
+      if (alliance.isPresent()) {
+        if (alliance.get() == DriverStation.Alliance.Red) return path.flipPath();
+      }
+
+      return path;
+
+    } catch (FileVersionException | IOException | ParseException e) {
+      return null;
+    }
+  }
+
+  public Command getTestCommand(){
+
+    PathPlannerPath path = getPath("test");
+
+    Command drivePath = AutoBuilder.followPath(path);
+
+    Command resetPose = new InstantCommand(() -> m_robotDrive.resetOdometry(path.getStartingDifferentialPose()));
+
+    return resetPose.andThen(drivePath);
+  }
 
   public Command getAutonomousCommand() {
-    try{
-        // Load the path you want to follow using its name in the GUI
-      PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory("New Path");
-
-      // var path = PathPlannerPath.fromPathFile("Example Path");
-
-      var traj = path.generateTrajectory(m_robotDrive.getRobotRelativeSpeeds(), m_robotDrive.getPose().getRotation(), m_robotDrive.config);
-      
-
-
-
-        // Create a path following command using AutoBuilder. This will also trigger event markers.
-      return new InstantCommand(()->m_robotDrive.resetOdometry(path.getStartingDifferentialPose())).andThen(AutoBuilder.followPath(path));
-
-    } catch (Exception e) {
-
-      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
-      return Commands.none();
-    }
+    return chooser.getSelected();
   }
 }

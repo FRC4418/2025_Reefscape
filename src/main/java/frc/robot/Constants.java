@@ -7,6 +7,9 @@ package frc.robot;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -25,10 +28,142 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  public static final class FieldPositions {
+
+    private static double alignDistance = 2.5;
+
+    private static double robotCenterToBumperEdge = .876/2;
+
+    private static double robotCenterToCoralOffset = .343;
+
+    private static double coralPoleOffset = .329;
+
+    private static double reefWidth = 1.663;
+
+    private static double scoreMovementVerticalTravel = (alignDistance - (reefWidth)) + .4;//- robotCenterToBumperEdge;
+
+    private static double leftScoreTravel = (-coralPoleOffset/2) + robotCenterToCoralOffset;
+
+    private static double rightScoreTravel = (coralPoleOffset/2) + robotCenterToCoralOffset;
+
+    public static Transform2d leftScoreTransform = new Transform2d(scoreMovementVerticalTravel, leftScoreTravel, new Rotation2d());
+
+    public static Transform2d rightScoreTransform = new Transform2d(scoreMovementVerticalTravel, rightScoreTravel, new Rotation2d());
+
+
+
+
+    private static double angledXOffset = .5 * alignDistance;
+
+    private static double angledYoffset = 0.866025403784 * alignDistance;
+
+
+    public static Pose2d[] ABPose = {
+      new Pose2d(4.5 - alignDistance,4, Rotation2d.fromDegrees(0)),
+      new Pose2d(13. + alignDistance,4, Rotation2d.fromDegrees(180))
+    };
+    public static Pose2d[] CDPose = {
+      new Pose2d(4.5 - angledXOffset, 4 - angledYoffset, Rotation2d.fromDegrees(60)),
+      new Pose2d(13. + angledXOffset, 4 + angledYoffset, Rotation2d.fromDegrees(180+60))
+    };
+    public static Pose2d[] EFPose = {
+      new Pose2d(4.5 + angledXOffset,4 - angledYoffset, Rotation2d.fromDegrees(120)),
+      new Pose2d(13. - angledXOffset,4 + angledYoffset, Rotation2d.fromDegrees(180+120))
+    };
+    public static Pose2d[] GHPose = {
+      new Pose2d(4.5 + alignDistance,4, Rotation2d.fromDegrees(180)),
+      new Pose2d(13. - alignDistance,4, Rotation2d.fromDegrees(0))
+    };
+    public static Pose2d[] IJPose = {
+      new Pose2d(4.5 + angledXOffset,4 + angledYoffset, Rotation2d.fromDegrees(-120)),
+      new Pose2d(13. - angledXOffset,4 - angledYoffset, Rotation2d.fromDegrees(180-120))
+    };
+    public static Pose2d[] KLPose = {
+      new Pose2d(4.5 - angledXOffset,4 + angledYoffset, Rotation2d.fromDegrees(-60)),
+      new Pose2d(13. + angledXOffset,4 - angledYoffset, Rotation2d.fromDegrees(180-60))
+    };
+
+  }
+
+  public static final class ManipulatorGearRatios {
+    public static double kAlgaeWristRatio = 1/50d;
+    public static double kCoralWristRatio = 1/50d;
+  }
+
+  public static final class ManipulatorPositions {
+    public static double kCoralElevatorPosIntake = 5;
+    public static double kCoralElevatorPosL4 = 123;
+    public static double kCoralElevatorPosL3 = 76;
+    public static double kCoralElevatorPosL2 = 40;
+    public static double kCoralElevatorPosL1 = 0;
+
+    public static double kCoralWristPosIntake = -0.959931088597;
+    public static double kCoralWristPosL4 = 0.395;
+    public static double kCoralWristPosL3 = .415;
+    public static double kCoralWristPosL2 = .415;
+    public static double kCoralWristPosL1 = 1.57254165605;
+    
+
+    public static double kAlgaeElevatorPosTop = 12.5;
+    public static double kAlgaeElevatorPosBottom = 7.5;
+    public static double kAlgaeElevatorPosProcesser = 2.5;
+
+    public static double kAlgaeWristPosIntake =  -0.610865238198;
+  }
+
+  public static final class PIDConstants {
+    public static double kElevatorP = 0.05;
+    public static double kElevatorI = 0;
+    public static double kElevatorD = 0;
+
+    public static double kClimberP = 0.2;
+    public static double kClimberI = 0.02;
+    public static double kClimberD = 0;
+
+    public static double kAlgaeWristP = 0.2;
+    public static double kAlgaeWristI = 0.02;
+    public static double kAlgaeWristD = 0;
+
+    public static double kAlgaeElevatorStall = 0.3;
+
+    public static double kAlgaeWristrStallMulti = 0.1;
+
+
+    public static double kCoralWristP = 1;
+    public static double kCoralWristI = 0.05;
+    public static double kCoralWristD = 0.05;
+
+    public static double kCoralWristMaxVel = 0.2;
+    public static double kCoralWristMaxAccel = 0.1;
+
+    public static double kCoralElevatorStall = 0.05;
+
+    public static double kCoralWristrStallMulti = 0.07;
+  }
+
+  public static final class MotorIDs {
+    public static final int climberMotorID = 30;
+
+
+    // public static final int leftAlgaeShooterMotorID = 22;
+    // public static final int rightAlgaeShooterMotorID = 23;
+    public static final int leftAlgaeIntakeMotorID = 9;
+    public static final int rightAlgaeIntakeMotorID = 10;
+    public static final int algaeWristMotorID = 11;
+    public static final int leftAlgaeElevatorMotorID = 30;
+    public static final int rightAlgaeElevatorMotorID = 31;
+
+    public static final int coralMotorID = 41;
+    public static final int coralWristMotorID = 40;
+    public static final int leftCoralElevatorMotorID = 20;
+    public static final int rightCoralElevatorMotorID = 21;
+  }
+
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 4.5d;
+    public static final double kMaxSpeedMetersPerSecond = 5d;
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
     public static final double kDirectionSlewRate = 2.5; // radians per second
@@ -60,13 +195,13 @@ public final class Constants {
 
     // SPARK MAX CAN IDs
     public static final int kFrontLeftDrivingCanId = 2;
-    public static final int kRearLeftDrivingCanId = 8;
-    public static final int kFrontRightDrivingCanId = 4;
+    public static final int kRearLeftDrivingCanId = 4;
+    public static final int kFrontRightDrivingCanId = 8;
     public static final int kRearRightDrivingCanId = 6;
 
     public static final int kFrontLeftTurningCanId = 1;
-    public static final int kRearLeftTurningCanId = 7;
-    public static final int kFrontRightTurningCanId = 3;
+    public static final int kRearLeftTurningCanId = 3;
+    public static final int kFrontRightTurningCanId = 7;
     public static final int kRearRightTurningCanId = 5;
 
     public static final boolean kGyroReversed = true;
@@ -145,11 +280,5 @@ public final class Constants {
 
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
-  }
-  public static final class armPositions {
-    public static final double Position1 = 4;
-    public static final double Position2 = 5;
-    public static final double Position3 = 6;
-    public static final double Position4 = 7;
   }
 }
