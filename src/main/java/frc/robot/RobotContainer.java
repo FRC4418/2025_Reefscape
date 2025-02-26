@@ -146,7 +146,6 @@ public class RobotContainer {
     SmartDashboard.putData("Reset Pose Estimation", new InstantCommand( () -> m_robotDrive.resetPoseEstimation() ));
 
     // m_CommandXboxControllerDriver.y().onTrue(new InstantCommand( () -> m_robotDrive.zeroTeleopHeading()));
-    m_CommandXboxControllerDriver.y().whileTrue(new SetCoralPositionMotorsPercentOutput(m_coralSubsystem, 0, 0.07));
 
     m_CommandXboxControllerDriver.a().toggleOnTrue(new AutoScore(m_robotDrive, m_coralSubsystem, m_robotStateController));
 
@@ -165,7 +164,7 @@ public class RobotContainer {
 
     // m_algeeSubsystem.setDefaultCommand(new SetAlgaeIntakePercentSpeed(m_algeeSubsystem, 0, 0).alongWith(new SetAlgaePositionMotorsPercentOutput(m_algeeSubsystem, 0, 0)));
 
-    m_coralSubsystem.setDefaultCommand(new CoralDefault(m_coralSubsystem));
+    m_coralSubsystem.setDefaultCommand(new SetCoralPositionMotorsPercentOutput(m_coralSubsystem, 0, 0).alongWith(new SetCoralIntakePercentSpeed(m_coralSubsystem, 0)));
   }
 
   public void addAutoOptions(){

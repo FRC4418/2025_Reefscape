@@ -22,11 +22,13 @@ public class SetCoralPosition extends Command {
 
   private TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(PIDConstants.kCoralWristMaxVel, PIDConstants.kCoralWristMaxAccel);
 
-  private ProfiledPIDController elevatorPIDController = new ProfiledPIDController(PIDConstants.kCoralWristP, PIDConstants.kCoralWristI, PIDConstants.kCoralWristD, constraints);
+  // private ProfiledPIDController elevatorPIDController = new ProfiledPIDController(PIDConstants.kCoralWristP, PIDConstants.kCoralWristI, PIDConstants.kCoralWristD, constraints);
+
+  private PIDController elevatorPIDController = new PIDController(PIDConstants.kElevatorP, PIDConstants.kElevatorI, PIDConstants.kElevatorD);
 
   private PIDController wristPIDController = new PIDController(PIDConstants.kCoralWristP, PIDConstants.kCoralWristI, PIDConstants.kCoralWristD);
   
-  
+
   public SetCoralPosition(CoralSubsystem coralSubsystem, double elevatorPos, double wristPose) {
     this.elevatorPos = elevatorPos;
     this.wristPose = wristPose;

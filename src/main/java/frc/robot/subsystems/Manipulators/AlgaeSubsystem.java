@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.Manipulators;
 
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -11,6 +12,7 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,10 +31,19 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   private final SparkMax m_leftElevatorMotor = new SparkMax(MotorIDs.leftAlgaeElevatorMotorID, MotorType.kBrushless);
   private final SparkMax m_rightElevatorMotor = new SparkMax(MotorIDs.rightAlgaeElevatorMotorID, MotorType.kBrushless);
+
+  private final SparkClosedLoopController m_leftElevatorController = m_leftElevatorMotor.getClosedLoopController();
+  private final SparkClosedLoopController m_rightElevatorController = m_rightElevatorMotor.getClosedLoopController();
+
   private final RelativeEncoder m_elevatorEncoder = m_leftElevatorMotor.getEncoder();
 
   public AlgaeSubsystem() {
 
+  }
+
+  public void setPos(double pos){
+    m_leftElevatorController.setReference(pos, ControlType.kMAXMotionPositionControl);
+    m_rightElevatorController.setReference(pos, ControlType.kMAXMotionPositionControl);
   }
 
   public void spinIntake(double speed){

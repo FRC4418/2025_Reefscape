@@ -68,8 +68,8 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   public void setWristPercentOutput(double speed){
-    if(speed > .4) speed = .4;
-    if(speed < -.4) speed = -.4;
+    if(speed > .5) speed = .5;
+    if(speed < -.5) speed = -.5;
     m_wristMotor.set(speed);
     SmartDashboard.putNumber("wrist percent", speed);
   }
