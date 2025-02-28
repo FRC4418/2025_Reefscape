@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.Manipulators;
 
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -19,34 +21,27 @@ import frc.robot.Constants.MotorIDs;
 
 public class ClimberSubsystem extends SubsystemBase {
 
-  private final SparkMax m_climberSparkMax = new SparkMax(MotorIDs.climberMotorID, MotorType.kBrushless);
-  private final RelativeEncoder m_encoder;
-  private final SparkClosedLoopController m_controller;
+  private final TalonFX m_climberMotor = new TalonFX(MotorIDs.climberMotorID);
   /** Creates a new ClimberSubsystem. */
   public ClimberSubsystem() {
-    m_encoder = m_climberSparkMax.getEncoder();
-    m_controller = m_climberSparkMax.getClosedLoopController();
-
-
-    m_climberSparkMax.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    m_climberMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
-  public void setPosition(double pos){
-    m_controller.setReference(pos, ControlType.kPosition);
-  }
   
   public double getPosition(){
-    return m_encoder.getPosition();
+    return m_climberMotor.getPosition().getValueAsDouble();
   }
 
   public void setPercentSpeed(double percent){
-    m_climberSparkMax.set(percent);
+    // if(getPosition() < 0) return;
+    m_climberMotor.set(percent);
   }
 
 
 
   @Override
   public void periodic() {
+    
     // System.out.println(m_encoder.getPosition());
     // This method will be called once per scheduler run
   }

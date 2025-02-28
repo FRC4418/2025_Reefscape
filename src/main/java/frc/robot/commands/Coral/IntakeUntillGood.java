@@ -4,15 +4,17 @@
 
 package frc.robot.commands.Coral;
 
+import javax.naming.ldap.HasControls;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Manipulators.CoralSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class SetCoralIntakePercentSpeed extends Command {
+public class IntakeUntillGood extends Command {
   /** Creates a new SpinCoralSubsystem. */
   private CoralSubsystem m_coralSubsystem;
   private double speed;
-  public SetCoralIntakePercentSpeed(CoralSubsystem coralSubsystem, double speed) {
+  public IntakeUntillGood(CoralSubsystem coralSubsystem, double speed) {
     this.speed = speed;
     m_coralSubsystem = coralSubsystem;
     // addRequirements(coralSubsystem);
@@ -32,13 +34,11 @@ public class SetCoralIntakePercentSpeed extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if(speed > .1) return;
-    m_coralSubsystem.setHasCoral(false);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return m_coralSubsystem.hasCoral();
   }
 }

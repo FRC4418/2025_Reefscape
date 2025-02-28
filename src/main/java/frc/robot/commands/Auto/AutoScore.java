@@ -15,6 +15,9 @@ import com.pathplanner.lib.path.Waypoint;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.Coral.SetCoralIntakePercentSpeed;
+import frc.robot.commands.Coral.SetCoralPosition;
 import frc.robot.subsystems.RobotStateController;
 import frc.robot.subsystems.Drivetrain.DriveSubsystem;
 import frc.robot.subsystems.Manipulators.CoralSubsystem;
@@ -28,7 +31,7 @@ public class AutoScore extends Command {
   /** Creates a new AutoScore. */
   public AutoScore(DriveSubsystem driveSubsystem, CoralSubsystem coralSubsystem, RobotStateController robotStateController) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(robotStateController, driveSubsystem, coralSubsystem);
+    // addRequirements(robotStateController, driveSubsystem, coralSubsystem);
     this.m_robotDrive = driveSubsystem;
     this.m_robotStateController = robotStateController;
     this.m_coralSubsystem = coralSubsystem;
@@ -37,13 +40,18 @@ public class AutoScore extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    Command setPos = new SetCoralPosition(m_coralSubsystem, m_robotStateController.getElevatorScorePos(), m_robotStateController.getWristScorePos());
 
     Command driveToTarget = AutoBuilder.followPath(getTargetPath());
 
-    Command driveToScore = AutoBuilder.followPath(getScorePath());
+    Command driveToScore = AutoBuilder.followPath(getScorePath()).raceWith(setPos);
+    
+    Command score = new SetCoralIntakePercentSpeed(m_coralSubsystem, -1).raceWith(new WaitCommand(0.2)).raceWith(setPos);
 
-    command = driveToTarget.andThen(driveToScore);
-    command.initialize();
+    // command = driveToTarget.andThen(driveToScore).andThen(score);
+    command = driveToTarget;
+    // command.initialize();
+    // command.schedule();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -57,6 +65,7 @@ public class AutoScore extends Command {
   public void end(boolean interrupted) {
     command.end(interrupted);
   }
+
 
   // Returns true when the command should end.
   @Override

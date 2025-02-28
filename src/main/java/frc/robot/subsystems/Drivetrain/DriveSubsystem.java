@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.utils.LimelightHelpers;
 import frc.utils.LimelightHelpers.LimelightResults;
+import frc.utils.LimelightHelpers.PoseEstimate;
 
 public class DriveSubsystem extends SubsystemBase {
   // Create MAXSwerveModules
@@ -65,7 +66,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   private double poseEstimationGyroOffset = 0;
 
-  private double absoluteGyroOffset = 0;
+  public double absoluteGyroOffset = 0;
 
   private PPHolonomicDriveController driveController = new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
                     new PIDConstants(10.0, 1, 0.1), // Translation PID constants
@@ -268,17 +269,31 @@ public class DriveSubsystem extends SubsystemBase {
     else if (useMegaTag2 == true)
     {
       LimelightHelpers.SetRobotOrientation("limelight-four", getPose().getRotation().getDegrees(), getTurnRate(), 0, 0, 0, 0);
-      LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-four");
+      LimelightHelpers.PoseEstimate ll4mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-four");
+
+      LimelightHelpers.SetRobotOrientation("limelight-three", getPose().getRotation().getDegrees(), getTurnRate(), 0, 0, 0, 0);
+      LimelightHelpers.PoseEstimate ll3mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-three");
 
       
 
-      if(mt2 == null) return;
+      if(ll4mt2 == null && ll3mt2 == null) return;
+
+      if(ll4mt2 == null) ll4mt2 = ll3mt2;
+      if(ll3mt2 == null) ll3mt2 = ll4mt2;
+
+      PoseEstimate mt2;
+
+      if(ll4mt2.avgTagArea > ll3mt2.avgTagArea){
+        mt2 = ll4mt2;
+      }else{
+        mt2 = ll3mt2;
+      }
 
       if(Math.abs(getTurnRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
       {
         doRejectUpdate = true;
       }
-      if(mt2.tagCount == 0)
+      if(ll3mt2.tagCount == 0)
       {
         doRejectUpdate = true;
       }
@@ -312,22 +327,6 @@ public class DriveSubsystem extends SubsystemBase {
       : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered);
 
     driveRobotRelative(speeds);
-    // var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(speeds);
-        
-      
-    // SwerveDriveKinematics.desaturateWheelSpeeds(
-    //     swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
-
-
-    // ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
-    
-    // Logger.recordOutput("SwerveStates/Setpoints", swerveModuleStates);
-    // Logger.recordOutput("SwerveChassisSpeeds/Setpoints", discreteSpeeds);
-    
-    // m_frontLeft.setDesiredState(swerveModuleStates[0]);
-    // m_frontRight.setDesiredState(swerveModuleStates[1]);
-    // m_rearLeft.setDesiredState(swerveModuleStates[2]);
-    // m_rearRight.setDesiredState(swerveModuleStates[3]);
 
   }
 

@@ -31,7 +31,7 @@ public final class Constants {
 
   public static final class FieldPositions {
 
-    private static double alignDistance = 2.5;
+    private static double alignDistance = 1.5;
 
     private static double robotCenterToBumperEdge = .876/2;
 
@@ -50,7 +50,6 @@ public final class Constants {
     public static Transform2d leftScoreTransform = new Transform2d(scoreMovementVerticalTravel, leftScoreTravel, new Rotation2d());
 
     public static Transform2d rightScoreTransform = new Transform2d(scoreMovementVerticalTravel, rightScoreTravel, new Rotation2d());
-
 
 
 
@@ -84,6 +83,11 @@ public final class Constants {
       new Pose2d(13. + angledXOffset,4 - angledYoffset, Rotation2d.fromDegrees(180-60))
     };
 
+    public static Pose2d rightIntakeBlue =new Pose2d(1,1, Rotation2d.fromDegrees(-125+180)).transformBy(new Transform2d(0,.01, new Rotation2d()));
+    public static Pose2d rightIntakeRed =new Pose2d(16.5,1, Rotation2d.fromDegrees(-55+180)).transformBy(new Transform2d(0,.01, new Rotation2d()));
+    public static Pose2d leftIntakeBlue =new Pose2d(1,7, Rotation2d.fromDegrees(125+180)).transformBy(new Transform2d(0,.01, new Rotation2d()));
+    public static Pose2d leftIntakeRed =new Pose2d(16.5,7, Rotation2d.fromDegrees(55+180)).transformBy(new Transform2d(0,.01, new Rotation2d()));
+
   }
 
   public static final class ManipulatorGearRatios {
@@ -93,13 +97,13 @@ public final class Constants {
 
   public static final class ManipulatorPositions {
     public static double kCoralElevatorPosIntake = 5;
-    public static double kCoralElevatorPosL4 = 123;
-    public static double kCoralElevatorPosL3 = 76;
-    public static double kCoralElevatorPosL2 = 40;
+    public static double kCoralElevatorPosL4 = 135;
+    public static double kCoralElevatorPosL3 = 83;
+    public static double kCoralElevatorPosL2 = 50;
     public static double kCoralElevatorPosL1 = 0;
 
     public static double kCoralWristPosIntake = -0.959931088597;
-    public static double kCoralWristPosL4 = 0.395;
+    public static double kCoralWristPosL4 = 0.41;
     public static double kCoralWristPosL3 = .415;
     public static double kCoralWristPosL2 = .415;
     public static double kCoralWristPosL1 = 1.57254165605;
@@ -143,7 +147,7 @@ public final class Constants {
   }
 
   public static final class MotorIDs {
-    public static final int climberMotorID = 30;
+    public static final int climberMotorID = 43;
 
 
     // public static final int leftAlgaeShooterMotorID = 22;

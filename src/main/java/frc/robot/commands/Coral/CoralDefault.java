@@ -25,13 +25,15 @@ public class CoralDefault extends Command {
   @Override
   public void initialize() {
     goDown = new SetCoralPosition(m_coralSubsystem, 0, 0.2);
+    goDown.initialize();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(-.2 < m_coralSubsystem.getElevatorPos() || m_coralSubsystem.getElevatorPos() < 1){
+    if(m_coralSubsystem.getElevatorPos() > 2){
       goDown.execute();
+      m_coralSubsystem.setIntakePercentOutput(0);
     }else{
       m_coralSubsystem.setElevatorPercentOutput(0);
       m_coralSubsystem.setWristPercentOutput(0);

@@ -39,6 +39,8 @@ public class CoralSubsystem extends SubsystemBase {
   private final SparkMaxConfig followConfig = new SparkMaxConfig();
 
   private final AbsoluteEncoder m_wristEncoder = m_leftElevatorMotor.getAbsoluteEncoder();
+
+  private boolean hasCoral = true;
   /** Creates a new CoralSubsystem. */
   public CoralSubsystem() {
     // m_leftElevatorMotor.configure(followConfig.follow(21, true), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -47,11 +49,23 @@ public class CoralSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    // System.out.println(m_wristMotor.getPosition().getValueAsDouble());
-    // System.out.println(getElevatorPos());
+    if(getCoralMotorCurrent() > 100) hasCoral = true;
+    SmartDashboard.putBoolean("has coral", hasCoral);
+    SmartDashboard.putNumber("current thing", m_coralMotor.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putNumber("coral elevator pos", getElevatorPos());
     SmartDashboard.putNumber("coral wrist pos", getWristPos());
+  }
+
+  public double getCoralMotorCurrent(){
+    return m_coralMotor.getStatorCurrent().getValueAsDouble();
+  }
+
+  public boolean hasCoral(){
+    return hasCoral;
+  }
+
+  public void setHasCoral(boolean has){
+    hasCoral = has;
   }
 
   public void setPosFancy(double pos){
@@ -64,7 +78,8 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   public double getWristPos(){
-    return m_wristEncoder.getPosition();
+    double pos = m_wristEncoder.getPosition();
+    return pos > 0.9 ? 0 : pos;
   }
 
   public void setWristPercentOutput(double speed){

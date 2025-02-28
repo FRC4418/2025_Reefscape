@@ -7,6 +7,7 @@ package frc.robot;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.nio.file.Path;
+import java.text.FieldPosition;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
@@ -34,6 +35,7 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -42,6 +44,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.FieldPositions;
 import frc.robot.Constants.ManipulatorPositions;
@@ -50,12 +53,14 @@ import frc.robot.commands.ToggleCommand;
 import frc.robot.commands.Algae.SetAlgaeIntakePercentSpeed;
 import frc.robot.commands.Algae.SetAlgaePosition;
 import frc.robot.commands.Algae.SetAlgaePositionMotorsPercentOutput;
+import frc.robot.commands.Auto.AutoIntake;
 import frc.robot.commands.Auto.AutoScore;
 import frc.robot.commands.Auto.DriveToPose;
 import frc.robot.commands.Auto.DriveToTarget;
 import frc.robot.commands.Climber.SetClimberPercentSpeed;
 import frc.robot.commands.Climber.SetClimberPos;
 import frc.robot.commands.Coral.CoralDefault;
+import frc.robot.commands.Coral.IntakeUntillGood;
 import frc.robot.commands.Coral.SetCoralIntakePercentSpeed;
 import frc.robot.commands.Coral.SetCoralPosition;
 import frc.robot.commands.Coral.SetCoralPositionMotorsPercentOutput;
@@ -93,6 +98,9 @@ public class RobotContainer {
   
   private CommandXboxController m_CommandXboxControllerOther = new CommandXboxController(1);
 
+  private CommandGenericHID m_buttonBoard = new CommandGenericHID(5);
+
+
 
   private SendableChooser<Command> chooser = new SendableChooser<Command>();
 
@@ -118,17 +126,43 @@ public class RobotContainer {
 
   private void configureBindings() {
 
-    m_CommandXboxControllerOther.povDown().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.ABPose[1])));
-    m_CommandXboxControllerOther.rightBumper().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.CDPose[1])));
-    m_CommandXboxControllerOther.rightTrigger().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.EFPose[1])));
-    m_CommandXboxControllerOther.povUp().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.GHPose[1])));
-    m_CommandXboxControllerOther.leftTrigger().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.IJPose[1])));
-    m_CommandXboxControllerOther.leftBumper().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.KLPose[1])));
+
+    m_buttonBoard.button(1).onTrue(new InstantCommand(() -> m_robotStateController.setTargetAndScorePos(FieldPositions.ABPose, false)));
+    m_buttonBoard.button(2).onTrue(new InstantCommand(() -> m_robotStateController.setTargetAndScorePos(FieldPositions.KLPose, true)));
+    m_buttonBoard.button(3).onTrue(new InstantCommand(() -> m_robotStateController.setTargetAndScorePos(FieldPositions.KLPose, false)));
+    m_buttonBoard.button(4).onTrue(new InstantCommand(() -> m_robotStateController.setTargetAndScorePos(FieldPositions.IJPose, true)));
+    m_buttonBoard.button(5).onTrue(new InstantCommand(() -> m_robotStateController.setTargetAndScorePos(FieldPositions.IJPose, false)));
+    m_buttonBoard.button(6).onTrue(new InstantCommand(() -> m_robotStateController.setTargetAndScorePos(FieldPositions.GHPose, true)));
+    m_buttonBoard.button(7).onTrue(new InstantCommand(() -> m_robotStateController.setTargetAndScorePos(FieldPositions.GHPose, false)));
+    m_buttonBoard.button(8).onTrue(new InstantCommand(() -> m_robotStateController.setTargetAndScorePos(FieldPositions.EFPose, true)));
+    m_buttonBoard.button(9).onTrue(new InstantCommand(() -> m_robotStateController.setTargetAndScorePos(FieldPositions.EFPose, false)));
+    m_buttonBoard.button(10).onTrue(new InstantCommand(() -> m_robotStateController.setTargetAndScorePos(FieldPositions.CDPose, true)));
+    m_buttonBoard.button(11).onTrue(new InstantCommand(() -> m_robotStateController.setTargetAndScorePos(FieldPositions.CDPose, false)));
+    m_buttonBoard.button(12).onTrue(new InstantCommand(() -> m_robotStateController.setTargetAndScorePos(FieldPositions.ABPose, true)));
+
+    m_buttonBoard.axisGreaterThan(0, 0.6).onTrue(new InstantCommand(() ->m_robotStateController.setScoreManipulatorPos(ManipulatorPositions.kCoralElevatorPosL2, ManipulatorPositions.kCoralWristPosL2)));
+    m_buttonBoard.axisGreaterThan(1, 0.6).onTrue(new InstantCommand(() ->m_robotStateController.setScoreManipulatorPos(ManipulatorPositions.kCoralElevatorPosL3, ManipulatorPositions.kCoralWristPosL3)));
+    m_buttonBoard.axisLessThan(1, -0.6).onTrue(new InstantCommand(() ->m_robotStateController.setScoreManipulatorPos(ManipulatorPositions.kCoralElevatorPosL4, ManipulatorPositions.kCoralWristPosL4)));
+
+    m_CommandXboxControllerOther.povDown().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.ABPose)));
+    m_CommandXboxControllerOther.rightBumper().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.CDPose)));
+    m_CommandXboxControllerOther.rightTrigger().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.EFPose)));
+    m_CommandXboxControllerOther.povUp().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.GHPose)));
+    m_CommandXboxControllerOther.leftTrigger().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.IJPose)));
+    m_CommandXboxControllerOther.leftBumper().onTrue(new InstantCommand( () -> m_robotStateController.setTargetPose(FieldPositions.KLPose)));
 
     m_CommandXboxControllerOther.povLeft().onTrue(new InstantCommand( () -> m_robotStateController.setScoreTransform(true)));
     m_CommandXboxControllerOther.povRight().onTrue(new InstantCommand( () -> m_robotStateController.setScoreTransform(false)));
     // Command outTake = new ToggleCommand(new SetCoralIntakePercentSpeed(m_coralSubsystem, 1), new SetAlgaeIntakePercentSpeed(m_algeeSubsystem, 0, 1), modeSupplier);
 
+    m_CommandXboxControllerOther.rightBumper().onTrue(new InstantCommand( () -> m_robotStateController.setScoreManipulatorPos(ManipulatorPositions.kCoralElevatorPosL2, ManipulatorPositions.kCoralWristPosL2) ));
+    m_CommandXboxControllerOther.leftTrigger().onTrue(new InstantCommand( () -> m_robotStateController.setScoreManipulatorPos(ManipulatorPositions.kCoralElevatorPosL3, ManipulatorPositions.kCoralWristPosL3) ));
+    m_CommandXboxControllerOther.rightTrigger().onTrue(new InstantCommand( () -> m_robotStateController.setScoreManipulatorPos(ManipulatorPositions.kCoralElevatorPosL4, ManipulatorPositions.kCoralWristPosL4) ));
+
+
+    m_CommandXboxControllerOther.a().whileTrue(new SetClimberPercentSpeed(m_climber, -.4));
+    m_CommandXboxControllerOther.y().whileTrue(new SetClimberPercentSpeed(m_climber, .4));
+    
     m_CommandXboxControllerDriver.rightBumper().whileTrue(new RunCommand(() -> {
       m_robotStateController.setCoralMode(true); 
       // System.out.println(m_modeController.isInCoralMode());
@@ -145,7 +179,7 @@ public class RobotContainer {
 
     SmartDashboard.putData("Reset Pose Estimation", new InstantCommand( () -> m_robotDrive.resetPoseEstimation() ));
 
-    // m_CommandXboxControllerDriver.y().onTrue(new InstantCommand( () -> m_robotDrive.zeroTeleopHeading()));
+    m_CommandXboxControllerDriver.y().onTrue(new InstantCommand( () -> m_robotDrive.zeroTeleopHeading()));
 
     m_CommandXboxControllerDriver.a().toggleOnTrue(new AutoScore(m_robotDrive, m_coralSubsystem, m_robotStateController));
 
@@ -153,24 +187,32 @@ public class RobotContainer {
 
     m_CommandXboxControllerDriver.b().whileTrue(new SetCoralIntakePercentSpeed(m_coralSubsystem, -1));
 
-    m_CommandXboxControllerDriver.povUp().whileTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL4, ManipulatorPositions.kCoralWristPosL4));
-    m_CommandXboxControllerDriver.povRight().whileTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL3, ManipulatorPositions.kCoralWristPosL3));
-    m_CommandXboxControllerDriver.povLeft().whileTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL2, ManipulatorPositions.kCoralWristPosL2));
-    m_CommandXboxControllerDriver.povDown().whileTrue(new SetCoralPosition(m_coralSubsystem, 0.1, 0.2));
+    m_CommandXboxControllerDriver.rightBumper().toggleOnTrue(new IntakeUntillGood(m_coralSubsystem, 1));
 
-    m_CommandXboxControllerDriver.leftTrigger().whileTrue(new SetCoralPosition(m_coralSubsystem, 64, 0.02));
+    m_CommandXboxControllerDriver.povUp().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL4, ManipulatorPositions.kCoralWristPosL4));
+    m_CommandXboxControllerDriver.povRight().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL3, ManipulatorPositions.kCoralWristPosL3));
+    m_CommandXboxControllerDriver.povLeft().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL2, ManipulatorPositions.kCoralWristPosL2));
+    m_CommandXboxControllerDriver.povDown().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, 0.1, 0.2));
+
+    m_CommandXboxControllerDriver.leftTrigger().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, 71, 0));
+
+    m_CommandXboxControllerDriver.rightTrigger().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, 70, 0).raceWith(new IntakeUntillGood(m_coralSubsystem, 1)));
+
+    m_CommandXboxControllerDriver.rightBumper().toggleOnTrue(new AutoIntake(m_robotDrive, m_robotStateController, m_coralSubsystem));
 
     m_climber.setDefaultCommand(new SetClimberPercentSpeed(m_climber, 0));
 
     // m_algeeSubsystem.setDefaultCommand(new SetAlgaeIntakePercentSpeed(m_algeeSubsystem, 0, 0).alongWith(new SetAlgaePositionMotorsPercentOutput(m_algeeSubsystem, 0, 0)));
 
-    m_coralSubsystem.setDefaultCommand(new SetCoralPositionMotorsPercentOutput(m_coralSubsystem, 0, 0).alongWith(new SetCoralIntakePercentSpeed(m_coralSubsystem, 0)));
+    m_coralSubsystem.setDefaultCommand(new CoralDefault(m_coralSubsystem));
   }
 
   public void addAutoOptions(){
-    chooser.addOption("None", new InstantCommand());
+    chooser.setDefaultOption("None", new InstantCommand());
 
-    chooser.setDefaultOption("test", getTestCommand());
+    chooser.addOption("Forward",getGoForward());
+
+    chooser.addOption("test", getTestCommand());
 
     SmartDashboard.putData("Auto Selector", chooser);
   }
@@ -190,6 +232,24 @@ public class RobotContainer {
     } catch (FileVersionException | IOException | ParseException e) {
       return null;
     }
+  }
+
+  public Command getGoForward(){
+    var path = getPath("Forward");
+
+    Command resetPose = new InstantCommand(() -> m_robotDrive.resetOdometry(path.getStartingDifferentialPose()));
+
+    return resetPose.andThen(AutoBuilder.followPath(path));
+  }
+
+  public Command Center1p(){
+    var path = getPath("Forward");
+
+    Command resetPose = new InstantCommand(() -> m_robotDrive.resetOdometry(path.getStartingDifferentialPose()));
+
+    Command score = new AutoScore(m_robotDrive, m_coralSubsystem, m_robotStateController);
+
+    return resetPose.andThen(AutoBuilder.followPath(path)).andThen(score);
   }
 
   public Command getTestCommand(){

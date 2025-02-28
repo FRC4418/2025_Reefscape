@@ -15,56 +15,66 @@ import com.pathplanner.lib.path.Waypoint;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.commands.Coral.IntakeUntillGood;
+import frc.robot.commands.Coral.SetCoralPosition;
 import frc.robot.subsystems.RobotStateController;
 import frc.robot.subsystems.Drivetrain.DriveSubsystem;
+import frc.robot.subsystems.Manipulators.CoralSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class DriveToTarget extends Command {
+public class AutoIntake extends Command {
   private DriveSubsystem m_robotDrive;
   private RobotStateController m_robotStateController;
-  private Command driveCommand;
-  /** Creates a new DiveToTarget. */
-  public DriveToTarget(DriveSubsystem driveSubsystem, RobotStateController robotStateController) {
+  private CoralSubsystem m_coralSubsystem;
+  private Command command;
+  /** Creates a new AutoIntake. */
+  public AutoIntake(DriveSubsystem driveSubsystem , RobotStateController robotStateController, CoralSubsystem coralSubsystem) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    
     m_robotDrive = driveSubsystem;
     m_robotStateController = robotStateController;
+    m_coralSubsystem = coralSubsystem;
     addRequirements(driveSubsystem, robotStateController);
-    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    
+    
     var poses = new ArrayList<Pose2d>();
 
     poses.add(m_robotDrive.getPose());
-    poses.add(m_robotStateController.getTargetPose());
+    poses.add(m_robotStateController.getIntakPos());
 
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(poses);
 
-    PathConstraints constraints = new PathConstraints(2, 1.5, 2 * Math.PI, 4 * Math.PI);
+    PathConstraints constraints = new PathConstraints(1, 1, 2 * Math.PI, 4 * Math.PI);
 
     var path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0, m_robotStateController.getTargetPose().getRotation()));
 
-    driveCommand = AutoBuilder.followPath(path);
+    Command intake = new SetCoralPosition(m_coralSubsystem, 70, 0).raceWith(new IntakeUntillGood(m_coralSubsystem, 1));
 
-    driveCommand.initialize();
+
+    command = AutoBuilder.followPath(path);//.andThen(intake);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    driveCommand.execute();
+    
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    driveCommand.end(interrupted);
+    command.end(interrupted);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return driveCommand.isFinished();
+    return command.isFinished();
   }
 }

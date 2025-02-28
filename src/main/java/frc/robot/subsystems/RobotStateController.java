@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Percent;
 
+import java.text.FieldPosition;
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -26,7 +28,15 @@ public class RobotStateController extends SubsystemBase {
 
   private Pose2d targetPose2d = FieldPositions.GHPose[1];
 
+  private Pose2d intakePose = FieldPositions.leftIntakeBlue;
+
   private Transform2d scoreMovementTransform = new Transform2d();
+
+  private double elevatorScorePos = 0;
+
+  private double wristScorePos = 0.2;
+
+  private boolean isOnRed = false;
 
   
   
@@ -39,11 +49,13 @@ public class RobotStateController extends SubsystemBase {
     m_ledSubsystem = ledSubsystem;
     m_robotDrive = driveSubsystem;
 
-    boolean isOnRed = false;
     
     var alliance = DriverStation.getAlliance();
     if (alliance.isPresent()) {
       isOnRed =  alliance.get() == DriverStation.Alliance.Red;
+    }
+    if(isOnRed){
+      driveSubsystem.absoluteGyroOffset = 180;
     }
     
   }
@@ -60,19 +72,39 @@ public class RobotStateController extends SubsystemBase {
 
     }
   }
+  public boolean isRed(){
+    return isOnRed;
+  }
 
   public void setScoreTransform(boolean left){
     scoreMovementTransform = (left ? Constants.FieldPositions.leftScoreTransform :  Constants.FieldPositions.rightScoreTransform);
+  }
+
+  public void setScoreManipulatorPos(double elevator, double wrist){
+    elevatorScorePos = elevator;
+    wristScorePos = wrist;
+  }
+
+  public double getWristScorePos(){
+    return wristScorePos;
+  }
+
+  public double getElevatorScorePos(){
+    return elevatorScorePos;
   }
 
   public Transform2d getScoreTransform(){
     return scoreMovementTransform;
   }
 
-  public void setTargetPose(Pose2d pose){
-    targetPose2d = pose;
+  public void setTargetPose(Pose2d[] pose){
+    targetPose2d = isOnRed ? pose[1] : pose[0];
   }
 
+  public void setTargetAndScorePos(Pose2d[] poes, boolean left){
+    setTargetPose(poes);
+    setScoreTransform(left);
+  }
 
   public Pose2d getTargetPose(){
     return targetPose2d;
@@ -82,8 +114,20 @@ public class RobotStateController extends SubsystemBase {
     return coralMode;
   }
 
+  public Pose2d getIntakPos(){
+    return intakePose;
+  }
+
   @Override
   public void periodic() {
+    if(m_robotDrive.getPose().getY() > 4){
+      intakePose = isOnRed ? FieldPositions.leftIntakeRed : FieldPositions.rightIntakeBlue;
+    }else{
+      intakePose = isOnRed ? FieldPositions.rightIntakeRed : FieldPositions.leftIntakeBlue;
+    }
+    Logger.recordOutput("Elevator Target Pose", getElevatorScorePos());
+
+    Logger.recordOutput("Intake Target Pose", intakePose);
     // System.out.println(coralMode);
     // This method will be called once per scheduler run
     Logger.recordOutput("Target Pose", targetPose2d);

@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
 
 public class LedSubsystem extends SubsystemBase {
-  private AddressableLED m_led = new AddressableLED(3);
+  private AddressableLED m_led = new AddressableLED(0);
   private AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(300);
 
   private LEDPattern red = LEDPattern.solid(new Color(0, 255, 0));
