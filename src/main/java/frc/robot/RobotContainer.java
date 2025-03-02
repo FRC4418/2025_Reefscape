@@ -163,15 +163,6 @@ public class RobotContainer {
     m_CommandXboxControllerOther.a().whileTrue(new SetClimberPercentSpeed(m_climber, -.4));
     m_CommandXboxControllerOther.y().whileTrue(new SetClimberPercentSpeed(m_climber, .4));
     
-    m_CommandXboxControllerDriver.rightBumper().whileTrue(new RunCommand(() -> {
-      m_robotStateController.setCoralMode(true); 
-      // System.out.println(m_modeController.isInCoralMode());
-    }));
-
-    m_CommandXboxControllerDriver.leftBumper().whileTrue(new RunCommand(() -> {
-      m_robotStateController.setCoralMode(false); 
-      // System.out.println(m_modeController.isInCoralMode());
-    }));
 
     
 
@@ -187,7 +178,8 @@ public class RobotContainer {
 
     m_CommandXboxControllerDriver.b().whileTrue(new SetCoralIntakePercentSpeed(m_coralSubsystem, -1));
 
-    m_CommandXboxControllerDriver.rightBumper().toggleOnTrue(new IntakeUntillGood(m_coralSubsystem, 1));
+    m_CommandXboxControllerDriver.rightBumper().toggleOnTrue(new AutoIntake(m_robotDrive, m_robotStateController, m_coralSubsystem).
+      raceWith(new IntakeUntillGood(m_coralSubsystem, 1))  );
 
     m_CommandXboxControllerDriver.povUp().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL4, ManipulatorPositions.kCoralWristPosL4));
     m_CommandXboxControllerDriver.povRight().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL3, ManipulatorPositions.kCoralWristPosL3));
@@ -211,6 +203,8 @@ public class RobotContainer {
     chooser.setDefaultOption("None", new InstantCommand());
 
     chooser.addOption("Forward",getGoForward());
+    chooser.addOption("Left Forward",getGoForwardLeft());
+    chooser.addOption("Right Forward",getGoForwardRight());
 
     chooser.addOption("test", getTestCommand());
 
@@ -236,6 +230,20 @@ public class RobotContainer {
 
   public Command getGoForward(){
     var path = getPath("Forward");
+
+    Command resetPose = new InstantCommand(() -> m_robotDrive.resetOdometry(path.getStartingDifferentialPose()));
+
+    return resetPose.andThen(AutoBuilder.followPath(path));
+  }
+  public Command getGoForwardLeft(){
+    var path = getPath("Left Forward");
+
+    Command resetPose = new InstantCommand(() -> m_robotDrive.resetOdometry(path.getStartingDifferentialPose()));
+
+    return resetPose.andThen(AutoBuilder.followPath(path));
+  }
+  public Command getGoForwardRight(){
+    var path = getPath("Right Forward");
 
     Command resetPose = new InstantCommand(() -> m_robotDrive.resetOdometry(path.getStartingDifferentialPose()));
 

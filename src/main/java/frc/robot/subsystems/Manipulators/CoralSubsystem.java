@@ -54,6 +54,8 @@ public class CoralSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("current thing", m_coralMotor.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putNumber("coral elevator pos", getElevatorPos());
     SmartDashboard.putNumber("coral wrist pos", getWristPos());
+    SmartDashboard.putNumber("motor 20 current", m_leftElevatorMotor.getOutputCurrent());
+    SmartDashboard.putNumber("motor 21 current", m_rightElevatorMotor.getOutputCurrent());
   }
 
   public double getCoralMotorCurrent(){

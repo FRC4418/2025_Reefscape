@@ -44,13 +44,12 @@ public class AutoScore extends Command {
 
     Command driveToTarget = AutoBuilder.followPath(getTargetPath());
 
-    Command driveToScore = AutoBuilder.followPath(getScorePath()).raceWith(setPos);
+    Command driveToScore = AutoBuilder.followPath(getScorePath());//.raceWith(setPos);
     
-    Command score = new SetCoralIntakePercentSpeed(m_coralSubsystem, -1).raceWith(new WaitCommand(0.2)).raceWith(setPos);
+    Command score = new SetCoralIntakePercentSpeed(m_coralSubsystem, -1).raceWith(new WaitCommand(0.5)).raceWith(setPos);
 
-    // command = driveToTarget.andThen(driveToScore).andThen(score);
-    command = driveToTarget;
-    // command.initialize();
+    command = driveToTarget.andThen(driveToScore);//.andThen(score);
+    command.initialize();
     // command.schedule();
   }
 

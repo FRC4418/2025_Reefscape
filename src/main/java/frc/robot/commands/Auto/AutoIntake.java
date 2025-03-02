@@ -54,16 +54,17 @@ public class AutoIntake extends Command {
 
     var path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0, m_robotStateController.getTargetPose().getRotation()));
 
-    Command intake = new SetCoralPosition(m_coralSubsystem, 70, 0).raceWith(new IntakeUntillGood(m_coralSubsystem, 1));
+    // Command intake = new SetCoralPosition(m_coralSubsystem, 70, 0).raceWith(new IntakeUntillGood(m_coralSubsystem, 1));
 
 
     command = AutoBuilder.followPath(path);//.andThen(intake);
+    command.initialize();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
+    command.execute();
   }
 
   // Called once the command ends or is interrupted.

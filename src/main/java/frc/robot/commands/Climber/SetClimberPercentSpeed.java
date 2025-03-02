@@ -30,6 +30,7 @@ public class SetClimberPercentSpeed extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if(m_climberSubsystem.canRun == false) return;
     m_climberSubsystem.setPercentSpeed(speed);
   }
 

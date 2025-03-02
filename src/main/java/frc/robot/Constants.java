@@ -97,15 +97,15 @@ public final class Constants {
 
   public static final class ManipulatorPositions {
     public static double kCoralElevatorPosIntake = 5;
-    public static double kCoralElevatorPosL4 = 135;
+    public static double kCoralElevatorPosL4 = 134.5;
     public static double kCoralElevatorPosL3 = 83;
     public static double kCoralElevatorPosL2 = 50;
     public static double kCoralElevatorPosL1 = 0;
 
     public static double kCoralWristPosIntake = -0.959931088597;
-    public static double kCoralWristPosL4 = 0.41;
-    public static double kCoralWristPosL3 = .415;
-    public static double kCoralWristPosL2 = .415;
+    public static double kCoralWristPosL4 = 0.416;
+    public static double kCoralWristPosL3 = .435;
+    public static double kCoralWristPosL2 = .435;
     public static double kCoralWristPosL1 = 1.57254165605;
     
 

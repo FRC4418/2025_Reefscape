@@ -48,12 +48,15 @@ public class DriveToPose extends Command {
 
     driveCommand = AutoBuilder.followPath(path);
 
-    driveCommand.schedule();
+    // driveCommand.schedule();
+    driveCommand.initialize();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    driveCommand.execute();
+  }
 
   // Called once the command ends or is interrupted.
   @Override

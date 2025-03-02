@@ -54,7 +54,7 @@ public class RobotStateController extends SubsystemBase {
     if (alliance.isPresent()) {
       isOnRed =  alliance.get() == DriverStation.Alliance.Red;
     }
-    if(isOnRed){
+    if(!isOnRed){
       driveSubsystem.absoluteGyroOffset = 180;
     }
     

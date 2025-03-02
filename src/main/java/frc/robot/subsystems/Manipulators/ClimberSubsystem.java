@@ -16,15 +16,19 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MotorIDs;
 
 public class ClimberSubsystem extends SubsystemBase {
+  public boolean canRun = true;
+  double percent = 0;
 
   private final TalonFX m_climberMotor = new TalonFX(MotorIDs.climberMotorID);
   /** Creates a new ClimberSubsystem. */
   public ClimberSubsystem() {
     m_climberMotor.setNeutralMode(NeutralModeValue.Brake);
+    m_climberMotor.setPosition(0);
   }
 
   
@@ -33,7 +37,10 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public void setPercentSpeed(double percent){
-    // if(getPosition() < 0) return;
+
+    if(percent < 0 && getPosition() <= 0) percent = 0;
+    if(percent > 0 && getPosition() >= 370) percent = 0;
+    if(canRun== false) return;
     m_climberMotor.set(percent);
   }
 
@@ -41,6 +48,12 @@ public class ClimberSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("climber pos", getPosition());
+    if((percent < 0 && getPosition() < 0)||(percent > 0 && getPosition() > 320) ){
+      canRun = false;
+    }else{
+      canRun = true;
+    }
     
     // System.out.println(m_encoder.getPosition());
     // This method will be called once per scheduler run
