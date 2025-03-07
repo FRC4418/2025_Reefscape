@@ -18,6 +18,7 @@ import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.util.Color;
@@ -26,11 +27,13 @@ import frc.robot.Configs;
 
 public class LedSubsystem extends SubsystemBase {
   private AddressableLED m_led = new AddressableLED(0);
-  private AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(300);
+  private AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(104);
+  private AddressableLEDBufferView leftView = ledBuffer.createView(0, 51);
+  private AddressableLEDBufferView rightView = ledBuffer.createView(52, 103).reversed();
 
   private LEDPattern red = LEDPattern.solid(new Color(0, 255, 0));
   // private LEDPattern green = LEDPattern.solid(new Color(0, 255, 0));
-  private LEDPattern blue = LEDPattern.solid(new Color(175, 0, 255));
+  private LEDPattern blue = LEDPattern.solid(new Color(0, 0, 255));
 
   private static final Distance kLedSpacing = Meters.of(1 / 120.0);
 
@@ -47,7 +50,9 @@ public class LedSubsystem extends SubsystemBase {
 
 
   public void setPattern(LEDPattern pattern){
-    pattern.applyTo(ledBuffer);
+
+    pattern.applyTo(leftView);
+    pattern.applyTo(rightView);
     m_led.setData(ledBuffer);
     m_led.start();
   }
@@ -64,7 +69,7 @@ public class LedSubsystem extends SubsystemBase {
     }else if(DriverStation.isAutonomousEnabled()){
       setPattern(blue.breathe(Seconds.of(.5)));
     }else{
-      setPattern(LEDPattern.kOff);
+      setPattern(rainbow);
     }
   }
 }

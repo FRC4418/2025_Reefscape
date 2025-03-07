@@ -18,16 +18,8 @@ public class SetCoralPosition extends Command {
   private CoralSubsystem m_coralSubsystem;
   private double elevatorPos;
   private double wristPose;
-  // private PIDController elevatorPIDController = new PIDController(PIDConstants.kElevatorP, PIDConstants.kElevatorI, PIDConstants.kElevatorD);
 
-  private TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(PIDConstants.kCoralWristMaxVel, PIDConstants.kCoralWristMaxAccel);
 
-  // private ProfiledPIDController elevatorPIDController = new ProfiledPIDController(PIDConstants.kCoralWristP, PIDConstants.kCoralWristI, PIDConstants.kCoralWristD, constraints);
-
-  private PIDController elevatorPIDController = new PIDController(PIDConstants.kElevatorP, PIDConstants.kElevatorI, PIDConstants.kElevatorD);
-
-  private PIDController wristPIDController = new PIDController(PIDConstants.kCoralWristP, PIDConstants.kCoralWristI, PIDConstants.kCoralWristD);
-  
 
   public SetCoralPosition(CoralSubsystem coralSubsystem, double elevatorPos, double wristPose) {
     this.elevatorPos = elevatorPos;
@@ -39,26 +31,29 @@ public class SetCoralPosition extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double elevatorPIDvalue = elevatorPIDController.calculate(m_coralSubsystem.getElevatorPos(), elevatorPos);
-    double wristPIDValue = wristPIDController.calculate(m_coralSubsystem.getWristPos(), wristPose);
-    double wristStall = Math.cos(2*Math.PI*(m_coralSubsystem.getWristPos()-0.1)) * PIDConstants.kCoralWristrStallMulti;
+    // double elevatorPIDvalue = elevatorPIDController.calculate(m_coralSubsystem.getElevatorPos(), elevatorPos);
+    // double wristPIDValue = wristPIDController.calculate(m_coralSubsystem.getWristPos(), wristPose);
+    // double wristStall = Math.cos(2*Math.PI*(m_coralSubsystem.getWristPos()-0.1)) * PIDConstants.kCoralWristrStallMulti;
 
-    m_coralSubsystem.setWristPercentOutput(wristPIDValue + wristStall);
+    // m_coralSubsystem.setWristPercentOutput(wristPIDValue + wristStall);
 
 
-    // SmartDashboard.putNumber("command wrist pose", m_coralSubsystem.getWristPos());
-    // SmartDashboard.putNumber("command wrist pid out", wristPIDValue);
+    // // SmartDashboard.putNumber("command wrist pose", m_coralSubsystem.getWristPos());
+    // // SmartDashboard.putNumber("command wrist pid out", wristPIDValue);
 
-    if(elevatorPos - 2 < m_coralSubsystem.getElevatorPos()  || m_coralSubsystem.getElevatorPos() < elevatorPIDvalue + 2){
-      m_coralSubsystem.setElevatorPercentOutput(elevatorPIDvalue);// + PIDConstants.kCoralElevatorStall);
-    }else{
-      m_coralSubsystem.setPosFancy(elevatorPos);
-    }
+    // if(elevatorPos - 2 < m_coralSubsystem.getElevatorPos()  || m_coralSubsystem.getElevatorPos() < elevatorPIDvalue + 2){
+    //   m_coralSubsystem.setElevatorPercentOutput(elevatorPIDvalue);// + PIDConstants.kCoralElevatorStall);
+    // }else{
+    //   m_coralSubsystem.setPosFancy(elevatorPos);
+    // }
+    m_coralSubsystem.setManipulatorPos(elevatorPos, wristPose);
   }
 
   // Called once the command ends or is interrupted.

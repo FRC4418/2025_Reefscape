@@ -16,6 +16,7 @@ import com.pathplanner.lib.path.Waypoint;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants.FieldPositions;
 import frc.robot.commands.Coral.SetCoralIntakePercentSpeed;
 import frc.robot.commands.Coral.SetCoralPosition;
 import frc.robot.subsystems.RobotStateController;
@@ -27,7 +28,16 @@ public class AutoScore extends Command {
   private DriveSubsystem m_robotDrive;
   private CoralSubsystem m_coralSubsystem;
   private RobotStateController m_robotStateController;
-  Command command;
+  private Command drivePath1;
+  private Command drivePath2;
+  private Command mainCommand;
+
+  private boolean use2Paths = false;
+
+  private boolean doneWithPath1 = false;
+  private boolean doneWithPath2 = false;
+  
+
   /** Creates a new AutoScore. */
   public AutoScore(DriveSubsystem driveSubsystem, CoralSubsystem coralSubsystem, RobotStateController robotStateController) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -36,40 +46,73 @@ public class AutoScore extends Command {
     this.m_robotStateController = robotStateController;
     this.m_coralSubsystem = coralSubsystem;
   }
+  public AutoScore(DriveSubsystem driveSubsystem, CoralSubsystem coralSubsystem, RobotStateController robotStateController, boolean use2Paths) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    // addRequirements(robotStateController, driveSubsystem, coralSubsystem);
+    this.m_robotDrive = driveSubsystem;
+    this.m_robotStateController = robotStateController;
+    this.m_coralSubsystem = coralSubsystem;
+    this.use2Paths = use2Paths;
+    addRequirements(driveSubsystem, robotStateController);
+  }
+
+
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Command setPos = new SetCoralPosition(m_coralSubsystem, m_robotStateController.getElevatorScorePos(), m_robotStateController.getWristScorePos());
 
-    Command driveToTarget = AutoBuilder.followPath(getTargetPath());
+    drivePath1 = AutoBuilder.followPath(getTargetPath());
 
-    Command driveToScore = AutoBuilder.followPath(getScorePath());//.raceWith(setPos);
+    drivePath2 = AutoBuilder.followPath(getScorePath());
     
-    Command score = new SetCoralIntakePercentSpeed(m_coralSubsystem, -1).raceWith(new WaitCommand(0.5)).raceWith(setPos);
 
-    command = driveToTarget.andThen(driveToScore);//.andThen(score);
-    command.initialize();
-    // command.schedule();
+    if(use2Paths) {
+      mainCommand = drivePath1.andThen(drivePath2);
+    }else{
+      mainCommand = AutoBuilder.followPath(getPath(m_robotDrive.getPose(), m_robotStateController.getTargetPose().transformBy(m_robotStateController.getScoreTransform()).transformBy(FieldPositions.scoreOffset)));
+    }
+    mainCommand.initialize();
+    // drivePath2.initialize();
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    command.execute();
+    mainCommand.execute();
+    // if(doneWithPath1){
+    //   part1();
+    // }else{
+    //   part2();
+    // }
+  }
+
+  private void part1(){
+
+    drivePath1.execute();
+    
+    if(drivePath1.isFinished()){ 
+      doneWithPath1 = true;
+    }
+  }
+
+  private void part2(){
+    drivePath2.execute();
+    // m_coralSubsystem.setManipulatorPos(m_robotStateController.getElevatorScorePos(), m_robotStateController.getWristScorePos());
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    command.end(interrupted);
+    mainCommand.end(interrupted);
   }
 
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return command.isFinished();
+    return mainCommand.isFinished();
   }
   
   public PathPlannerPath getTargetPath(){
@@ -90,7 +133,21 @@ public class AutoScore extends Command {
     var poses = new ArrayList<Pose2d>();
 
     poses.add(m_robotStateController.getTargetPose());
-    poses.add(m_robotStateController.getTargetPose().transformBy(m_robotStateController.getScoreTransform()));
+    poses.add(m_robotStateController.getTargetPose().transformBy(m_robotStateController.getScoreTransform()).transformBy(FieldPositions.scoreOffset));
+
+    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(poses);
+
+    PathConstraints constraints = new PathConstraints(1, .5, 2 * Math.PI, 4 * Math.PI);
+
+    return new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0, m_robotStateController.getTargetPose().getRotation()));
+  }
+
+  public PathPlannerPath getPath(Pose2d initPose, Pose2d finalPose){
+    
+    var poses = new ArrayList<Pose2d>();
+
+    poses.add(initPose);
+    poses.add(finalPose);
 
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(poses);
 

@@ -69,8 +69,8 @@ public class DriveSubsystem extends SubsystemBase {
   public double absoluteGyroOffset = 0;
 
   private PPHolonomicDriveController driveController = new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(10.0, 1, 0.1), // Translation PID constants
-                    new PIDConstants(10.0, 1, 0.1) // Rotation PID constants
+                    new PIDConstants(5.0, 0, 0), // Translation PID constants
+                    new PIDConstants(5.0, 0, 0) // Rotation PID constants
             );
   // The gyro sensor
   
@@ -283,7 +283,7 @@ public class DriveSubsystem extends SubsystemBase {
 
       PoseEstimate mt2;
 
-      if(ll4mt2.avgTagArea > ll3mt2.avgTagArea){
+      if(ll4mt2.avgTagDist < ll3mt2.avgTagDist){
         mt2 = ll4mt2;
       }else{
         mt2 = ll3mt2;
@@ -293,7 +293,7 @@ public class DriveSubsystem extends SubsystemBase {
       {
         doRejectUpdate = true;
       }
-      if(ll3mt2.tagCount == 0)
+      if(ll3mt2.tagCount == 0 && ll4mt2.tagCount == 0)
       {
         doRejectUpdate = true;
       }

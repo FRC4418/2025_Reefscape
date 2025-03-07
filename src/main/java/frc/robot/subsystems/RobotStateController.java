@@ -4,17 +4,17 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Percent;
-
-import java.text.FieldPosition;
+import static edu.wpi.first.units.Units.Hertz;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -38,11 +38,15 @@ public class RobotStateController extends SubsystemBase {
 
   private boolean isOnRed = false;
 
-  
-  
+  private LEDPattern redGrad = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, new Color(0,255,0), new Color(100,255,0));
 
-  private LEDPattern coralLEDPattern = LEDPattern.solid(new Color(255, 255, 0));
-  private LEDPattern algaeLEDPattern = LEDPattern.solid(new Color(255, 0, 100));
+  private LEDPattern blueGrad = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, new Color(255,0,200), new Color(0,100,255));
+
+  private LEDPattern teleopDefault = blueGrad;
+
+  Distance ledSpacing = Meters.of(1 / 120.0);
+
+
 
   /** Creates a new ModeController. */
   public RobotStateController(LedSubsystem ledSubsystem, DriveSubsystem driveSubsystem) {
@@ -57,21 +61,16 @@ public class RobotStateController extends SubsystemBase {
     if(!isOnRed){
       driveSubsystem.absoluteGyroOffset = 180;
     }
+
+    LEDPattern base = (isOnRed ? redGrad : blueGrad);
     
+    m_ledSubsystem.setEnabledPattern(base.scrollAtRelativeSpeed(Hertz.of(.5)));
   }
 
   public void setCoralMode(boolean mode){
     coralMode = mode;
-    if(mode){
-      m_ledSubsystem.setEnabledPattern(coralLEDPattern);
-      m_robotDrive.setDriveYawOffset(0);
-      
-    }else{
-      m_ledSubsystem.setEnabledPattern(algaeLEDPattern);
-      m_robotDrive.setDriveYawOffset(90);
-
-    }
   }
+
   public boolean isRed(){
     return isOnRed;
   }
@@ -125,6 +124,9 @@ public class RobotStateController extends SubsystemBase {
     }else{
       intakePose = isOnRed ? FieldPositions.rightIntakeRed : FieldPositions.leftIntakeBlue;
     }
+
+
+
     Logger.recordOutput("Elevator Target Pose", getElevatorScorePos());
 
     Logger.recordOutput("Intake Target Pose", intakePose);

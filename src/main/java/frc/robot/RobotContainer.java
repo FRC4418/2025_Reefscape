@@ -5,73 +5,43 @@
 package frc.robot;
 
 import java.io.IOException;
-import java.lang.instrument.Instrumentation;
-import java.nio.file.Path;
 import java.text.FieldPosition;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.BooleanSupplier;
 
 import org.json.simple.parser.ParseException;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathfindingCommand;
-import com.pathplanner.lib.path.GoalEndState;
-import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.Waypoint;
-import com.pathplanner.lib.pathfinding.Pathfinder;
-import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.FileVersionException;
 
-import choreo.trajectory.Trajectory;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.FieldPositions;
 import frc.robot.Constants.ManipulatorPositions;
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.ToggleCommand;
-import frc.robot.commands.Algae.SetAlgaeIntakePercentSpeed;
-import frc.robot.commands.Algae.SetAlgaePosition;
-import frc.robot.commands.Algae.SetAlgaePositionMotorsPercentOutput;
 import frc.robot.commands.Auto.AutoIntake;
 import frc.robot.commands.Auto.AutoScore;
-import frc.robot.commands.Auto.DriveToPose;
-import frc.robot.commands.Auto.DriveToTarget;
 import frc.robot.commands.Climber.SetClimberPercentSpeed;
-import frc.robot.commands.Climber.SetClimberPos;
 import frc.robot.commands.Coral.CoralDefault;
 import frc.robot.commands.Coral.IntakeUntillGood;
 import frc.robot.commands.Coral.SetCoralIntakePercentSpeed;
 import frc.robot.commands.Coral.SetCoralPosition;
-import frc.robot.commands.Coral.SetCoralPositionMotorsPercentOutput;
+import frc.robot.subsystems.LedSubsystem;
+import frc.robot.subsystems.RobotStateController;
 import frc.robot.subsystems.Drivetrain.DriveSubsystem;
-import frc.robot.subsystems.Manipulators.AlgaeSubsystem;
 import frc.robot.subsystems.Manipulators.ClimberSubsystem;
 import frc.robot.subsystems.Manipulators.CoralSubsystem;
 import frc.robot.subsystems.Vision.VisionSubsystem;
-import frc.robot.subsystems.LedSubsystem;
-import frc.robot.subsystems.RobotStateController;
-import frc.utils.LimelightHelpers;
 
 public class RobotContainer {
   
@@ -170,9 +140,11 @@ public class RobotContainer {
 
     SmartDashboard.putData("Reset Pose Estimation", new InstantCommand( () -> m_robotDrive.resetPoseEstimation() ));
 
+    SmartDashboard.putData("Reset Pose to Targer", new InstantCommand( () -> m_robotDrive.resetOdometry(m_robotStateController.getTargetPose()) ));
+
     m_CommandXboxControllerDriver.y().onTrue(new InstantCommand( () -> m_robotDrive.zeroTeleopHeading()));
 
-    m_CommandXboxControllerDriver.a().toggleOnTrue(new AutoScore(m_robotDrive, m_coralSubsystem, m_robotStateController));
+    m_CommandXboxControllerDriver.a().toggleOnTrue(new AutoScore(m_robotDrive, m_coralSubsystem, m_robotStateController, false).alongWith(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL2, ManipulatorPositions.kCoralWristPosL2)));
 
     m_CommandXboxControllerDriver.x().whileTrue(new SetCoralIntakePercentSpeed(m_coralSubsystem, 1));
 
@@ -201,6 +173,8 @@ public class RobotContainer {
 
   public void addAutoOptions(){
     chooser.setDefaultOption("None", new InstantCommand());
+
+    chooser.addOption("center1p", center1p());
 
     chooser.addOption("Forward",getGoForward());
     chooser.addOption("Left Forward",getGoForwardLeft());
@@ -250,14 +224,14 @@ public class RobotContainer {
     return resetPose.andThen(AutoBuilder.followPath(path));
   }
 
-  public Command Center1p(){
-    var path = getPath("Forward");
+  public Command center1p(){
+    Command setupScorePos = new InstantCommand( () -> m_robotStateController.setScoreManipulatorPos(ManipulatorPositions.kCoralElevatorPosL4, ManipulatorPositions.kCoralWristPosL4) )
+    .alongWith( new InstantCommand( () -> m_robotStateController.setTargetAndScorePos(FieldPositions.GHPose, false) ))
+    .andThen(new WaitCommand(0.5));
+    Command score = new AutoScore(m_robotDrive, m_coralSubsystem, m_robotStateController, false).
+    alongWith(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL4, ManipulatorPositions.kCoralWristPosL4));
 
-    Command resetPose = new InstantCommand(() -> m_robotDrive.resetOdometry(path.getStartingDifferentialPose()));
-
-    Command score = new AutoScore(m_robotDrive, m_coralSubsystem, m_robotStateController);
-
-    return resetPose.andThen(AutoBuilder.followPath(path)).andThen(score);
+    return getGoForward().andThen(setupScorePos.andThen(score));
   }
 
   public Command getTestCommand(){

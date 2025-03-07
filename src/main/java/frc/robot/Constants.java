@@ -31,7 +31,7 @@ public final class Constants {
 
   public static final class FieldPositions {
 
-    private static double alignDistance = 1.5;
+    private static double alignDistance = 2;
 
     private static double robotCenterToBumperEdge = .876/2;
 
@@ -83,6 +83,8 @@ public final class Constants {
       new Pose2d(13. + angledXOffset,4 - angledYoffset, Rotation2d.fromDegrees(180-60))
     };
 
+    public static Transform2d scoreOffset = new Transform2d(0, 0.03, new Rotation2d());
+
     public static Pose2d rightIntakeBlue =new Pose2d(1,1, Rotation2d.fromDegrees(-125+180)).transformBy(new Transform2d(0,.01, new Rotation2d()));
     public static Pose2d rightIntakeRed =new Pose2d(16.5,1, Rotation2d.fromDegrees(-55+180)).transformBy(new Transform2d(0,.01, new Rotation2d()));
     public static Pose2d leftIntakeBlue =new Pose2d(1,7, Rotation2d.fromDegrees(125+180)).transformBy(new Transform2d(0,.01, new Rotation2d()));
@@ -97,7 +99,7 @@ public final class Constants {
 
   public static final class ManipulatorPositions {
     public static double kCoralElevatorPosIntake = 5;
-    public static double kCoralElevatorPosL4 = 134.5;
+    public static double kCoralElevatorPosL4 = 129.2;
     public static double kCoralElevatorPosL3 = 83;
     public static double kCoralElevatorPosL2 = 50;
     public static double kCoralElevatorPosL1 = 0;
