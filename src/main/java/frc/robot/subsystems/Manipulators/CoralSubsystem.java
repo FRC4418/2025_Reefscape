@@ -27,7 +27,8 @@ import frc.robot.Constants.PIDConstants;
 public class CoralSubsystem extends SubsystemBase {
   private final TalonFX m_wristMotor = new TalonFX(MotorIDs.coralWristMotorID);
 
-  private final TalonFX m_coralMotor = new TalonFX(MotorIDs.coralMotorID);
+  // private final TalonFX m_coralMotor = new TalonFX(MotorIDs.coralMotorID);
+  private final SparkMax m_coralMotor = new SparkMax(MotorIDs.coralMotorID, MotorType.kBrushless);
   // private final AbsoluteEncoder m_wristAbsoluteEncoder = m_coralMotor.getAbsoluteEncoder();
 
   private final SparkMax m_leftElevatorMotor = new SparkMax(MotorIDs.leftCoralElevatorMotorID, MotorType.kBrushless);
@@ -51,14 +52,13 @@ public class CoralSubsystem extends SubsystemBase {
   /** Creates a new CoralSubsystem. */
   public CoralSubsystem() {
     // m_leftElevatorMotor.configure(followConfig.follow(21, true), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    m_coralMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
   @Override
   public void periodic() {
-    if(getCoralMotorCurrent() > 100) hasCoral = true;
+    if(getCoralMotorCurrent() > 50) hasCoral = true;
     SmartDashboard.putBoolean("has coral", hasCoral);
-    SmartDashboard.putNumber("current thing", m_coralMotor.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("current thing", getCoralMotorCurrent());
     SmartDashboard.putNumber("coral elevator pos", getElevatorPos());
     SmartDashboard.putNumber("coral wrist pos", getWristPos());
     SmartDashboard.putNumber("motor 20 current", m_leftElevatorMotor.getOutputCurrent());
@@ -68,7 +68,7 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   public double getCoralMotorCurrent(){
-    return m_coralMotor.getStatorCurrent().getValueAsDouble();
+    return m_coralMotor.getOutputCurrent();
   }
 
   public boolean hasCoral(){
