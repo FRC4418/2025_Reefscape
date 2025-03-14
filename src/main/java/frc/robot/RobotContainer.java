@@ -36,6 +36,7 @@ import frc.robot.commands.Coral.CoralDefault;
 import frc.robot.commands.Coral.IntakeUntillGood;
 import frc.robot.commands.Coral.SetCoralIntakePercentSpeed;
 import frc.robot.commands.Coral.SetCoralPosition;
+import frc.robot.commands.Coral.SetCoralPositionMotorsPercentOutput;
 import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.RobotStateController;
 import frc.robot.subsystems.Drivetrain.DriveSubsystem;
@@ -52,9 +53,6 @@ public class RobotContainer {
   private final ClimberSubsystem m_climber = new ClimberSubsystem();
 
   private final LedSubsystem m_led = new LedSubsystem();
-
-
-  // private final AlgaeSubsystem m_algeeSubsystem = new AlgaeSubsystem();
 
   private final CoralSubsystem m_coralSubsystem = new CoralSubsystem();
 
@@ -154,9 +152,11 @@ public class RobotContainer {
       raceWith(new IntakeUntillGood(m_coralSubsystem, 1))  );
 
     m_CommandXboxControllerDriver.povUp().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL4, ManipulatorPositions.kCoralWristPosL4));
-    m_CommandXboxControllerDriver.povRight().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL3, ManipulatorPositions.kCoralWristPosL3));
-    m_CommandXboxControllerDriver.povLeft().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL2, ManipulatorPositions.kCoralWristPosL2));
-    m_CommandXboxControllerDriver.povDown().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, 0.1, 0.2));
+    m_CommandXboxControllerDriver.povRight().whileTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL3, ManipulatorPositions.kCoralWristPosL3));
+    m_CommandXboxControllerDriver.povLeft().whileTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL2, ManipulatorPositions.kCoralWristPosL2));
+    m_CommandXboxControllerDriver.povDown().whileTrue(new SetCoralPosition(m_coralSubsystem, 0.1, 0.25));
+
+    // m_CommandXboxControllerDriver.povUp().whileTrue(new SetCoralPositionMotorsPercentOutput(m_coralSubsystem, 0.2, 0));
 
     m_CommandXboxControllerDriver.leftTrigger().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, 71, 0));
 
@@ -166,9 +166,8 @@ public class RobotContainer {
 
     m_climber.setDefaultCommand(new SetClimberPercentSpeed(m_climber, 0));
 
-    // m_algeeSubsystem.setDefaultCommand(new SetAlgaeIntakePercentSpeed(m_algeeSubsystem, 0, 0).alongWith(new SetAlgaePositionMotorsPercentOutput(m_algeeSubsystem, 0, 0)));
-
-    m_coralSubsystem.setDefaultCommand(new CoralDefault(m_coralSubsystem));
+    // m_coralSubsystem.setDefaultCommand(new CoralDefault(m_coralSubsystem));
+    m_coralSubsystem.setDefaultCommand(new SetCoralIntakePercentSpeed(m_coralSubsystem, 0).alongWith(new SetCoralPositionMotorsPercentOutput(m_coralSubsystem, 0, 0)));
   }
 
   public void addAutoOptions(){
@@ -244,8 +243,9 @@ public class RobotContainer {
 
     return resetPose.andThen(drivePath);
   }
-
+  
   public Command getAutonomousCommand() {
-    return chooser.getSelected();
+    // return chooser.getSelected();
+    return new InstantCommand();
   }
 }

@@ -16,6 +16,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -39,10 +40,7 @@ public class CoralSubsystem extends SubsystemBase {
 
   private final RelativeEncoder m_elevatorEncoder = m_rightElevatorMotor.getEncoder();
 
-  private final SparkMaxConfig followConfig = new SparkMaxConfig();
-
-  private final AbsoluteEncoder m_wristEncoder = m_leftElevatorMotor.getAbsoluteEncoder();
-  
+  private final AbsoluteEncoder m_wristEncoder = m_coralMotor.getAbsoluteEncoder();
 
   private PIDController elevatorPIDController = new PIDController(PIDConstants.kElevatorP, PIDConstants.kElevatorI, PIDConstants.kElevatorD);
 
@@ -63,7 +61,7 @@ public class CoralSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("coral wrist pos", getWristPos());
     SmartDashboard.putNumber("motor 20 current", m_leftElevatorMotor.getOutputCurrent());
     SmartDashboard.putNumber("motor 21 current", m_rightElevatorMotor.getOutputCurrent());
-
+    SmartDashboard.putNumber("elevator speed", getElevatorSpeed());
     
   }
 
@@ -83,17 +81,22 @@ public class CoralSubsystem extends SubsystemBase {
     
     double elevatorPIDvalue = elevatorPIDController.calculate(getElevatorPos(), elevatorPos);
     double wristPIDValue = wristPIDController.calculate(getWristPos(), wristPos);
-    double wristStall = Math.cos(2*Math.PI*getWristPos()-0.1) * PIDConstants.kCoralWristrStallMulti;
+    double wristStall = Math.cos(2*Math.PI*(getWristPos()-0.15)) * PIDConstants.kCoralWristrStallMulti;
 
-    setWristPercentOutput(wristPIDValue + wristStall);
+    setWristPercentOutput(wristStall + wristPIDValue);
 
 
     SmartDashboard.putNumber("command wrist pid out", wristPIDValue + wristStall);
 
+    double maxElevatorPercent = getElevatorSpeed()/4000+.2;
+
+    elevatorPIDvalue = MathUtil.clamp(elevatorPIDvalue, -maxElevatorPercent, maxElevatorPercent);
+
     if(elevatorPos - 2 < getElevatorPos()  || getElevatorPos() < elevatorPIDvalue + 2){
-      setElevatorPercentOutput(elevatorPIDvalue);// + PIDConstants.kCoralElevatorStall);
+      setElevatorPercentOutput(elevatorPIDvalue);
     }else{
-      setPosFancy(elevatorPos);
+      // setPosFancy(elevatorPos);
+      setElevatorPercentOutput(elevatorPIDvalue);
     }
   }
 
@@ -114,12 +117,16 @@ public class CoralSubsystem extends SubsystemBase {
   public void setWristPercentOutput(double speed){
     if(speed > .5) speed = .5;
     if(speed < -.5) speed = -.5;
-    m_wristMotor.set(speed);
-    SmartDashboard.putNumber("wrist percent", speed);
+    m_wristMotor.set(-speed);
+    SmartDashboard.putNumber("wrist percent", -speed);
   }
 
   public double getElevatorPos(){
     return m_elevatorEncoder.getPosition();
+  }
+
+  public double getElevatorSpeed(){
+    return Math.abs(m_elevatorEncoder.getVelocity());
   }
 
   public void setElevatorPercentOutput(double speed){

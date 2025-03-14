@@ -99,15 +99,15 @@ public final class Constants {
 
   public static final class ManipulatorPositions {
     public static double kCoralElevatorPosIntake = 5;
-    public static double kCoralElevatorPosL4 = 129.2;
-    public static double kCoralElevatorPosL3 = 83;
-    public static double kCoralElevatorPosL2 = 50;
+    public static double kCoralElevatorPosL4 = 132;
+    public static double kCoralElevatorPosL3 = 72+3;
+    public static double kCoralElevatorPosL2 = 36+3;
     public static double kCoralElevatorPosL1 = 0;
 
     public static double kCoralWristPosIntake = -0.959931088597;
-    public static double kCoralWristPosL4 = 0.416;
-    public static double kCoralWristPosL3 = .435;
-    public static double kCoralWristPosL2 = .435;
+    public static double kCoralWristPosL4 = 0.47;
+    public static double kCoralWristPosL3 = .47;
+    public static double kCoralWristPosL2 = .47;
     public static double kCoralWristPosL1 = 1.57254165605;
     
 
@@ -127,7 +127,7 @@ public final class Constants {
     public static double kClimberI = 0.02;
     public static double kClimberD = 0;
 
-    public static double kAlgaeWristP = 0.2;
+    public static double kAlgaeWristP = 0.5;
     public static double kAlgaeWristI = 0.02;
     public static double kAlgaeWristD = 0;
 
@@ -138,18 +138,18 @@ public final class Constants {
 
     public static double kCoralWristP = 1;
     public static double kCoralWristI = 0.05;
-    public static double kCoralWristD = 0.05;
+    public static double kCoralWristD = 0.1;
 
     public static double kCoralWristMaxVel = 0.2;
     public static double kCoralWristMaxAccel = 0.1;
 
     public static double kCoralElevatorStall = 0.05;
 
-    public static double kCoralWristrStallMulti = 0.07;
+    public static double kCoralWristrStallMulti = 0.1;
   }
 
   public static final class MotorIDs {
-    public static final int climberMotorID = 43;
+    public static final int climberMotorID = 36;
 
 
     // public static final int leftAlgaeShooterMotorID = 22;
@@ -160,7 +160,7 @@ public final class Constants {
     public static final int leftAlgaeElevatorMotorID = 30;
     public static final int rightAlgaeElevatorMotorID = 31;
 
-    public static final int coralMotorID = 41;
+    public static final int coralMotorID = 43;
     public static final int coralWristMotorID = 40;
     public static final int leftCoralElevatorMotorID = 20;
     public static final int rightCoralElevatorMotorID = 21;
@@ -169,7 +169,7 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 1d;
+    public static final double kMaxSpeedMetersPerSecond = 3d;
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
     public static final double kDirectionSlewRate = 2.5; // radians per second
@@ -177,7 +177,7 @@ public final class Constants {
     public static final double kRotationalSlewRate = 10.0; // percent per second (1 = 100%)
 
     // Chassis configuration
-    public static double robotWidth = 20.5;
+    public static double robotWidth = 28;
 
     public static double robotRadius = (Math.sqrt(2*Math.pow(robotWidth, 2))/2)*0.254;
 
@@ -200,17 +200,17 @@ public final class Constants {
     public static final double kBackRightChassisAngularOffset = Math.PI / 2;
 
 
-    public static final int kFrontLeftDrivingCanId = 2;
-    public static final int kRearLeftDrivingCanId = 4;
-    public static final int kFrontRightDrivingCanId = 8;
-    public static final int kRearRightDrivingCanId = 6;
+    public static final int kFrontLeftDrivingCanId = 8;
+    public static final int kRearLeftDrivingCanId = 6;
+    public static final int kFrontRightDrivingCanId = 4;
+    public static final int kRearRightDrivingCanId = 2;
 
-    public static final int kFrontLeftTurningCanId = 1;
-    public static final int kRearLeftTurningCanId = 3;
-    public static final int kFrontRightTurningCanId = 7;
+    public static final int kFrontLeftTurningCanId = 7;
+    public static final int kRearLeftTurningCanId = 5;
+    public static final int kFrontRightTurningCanId = 3;
     public static final int kRearRightTurningCanId = 1;
 
-    public static final boolean kGyroReversed = false;
+    public static final boolean kGyroReversed = true;
 
   }
 

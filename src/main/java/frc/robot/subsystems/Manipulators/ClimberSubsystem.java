@@ -24,16 +24,15 @@ public class ClimberSubsystem extends SubsystemBase {
   public boolean canRun = true;
   double percent = 0;
 
-  private final TalonFX m_climberMotor = new TalonFX(MotorIDs.climberMotorID);
+  private final SparkMax m_climberMotor = new SparkMax(MotorIDs.climberMotorID, MotorType.kBrushless);
   /** Creates a new ClimberSubsystem. */
   public ClimberSubsystem() {
-    m_climberMotor.setNeutralMode(NeutralModeValue.Brake);
-    m_climberMotor.setPosition(0);
+
   }
 
   
   public double getPosition(){
-    return m_climberMotor.getPosition().getValueAsDouble();
+    return m_climberMotor.getEncoder().getPosition();
   }
 
   public void setPercentSpeed(double percent){
