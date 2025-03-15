@@ -43,9 +43,9 @@ public final class Constants {
 
     private static double scoreMovementVerticalTravel = (alignDistance - (reefWidth)) + .4;//- robotCenterToBumperEdge;
 
-    private static double leftScoreTravel = (-coralPoleOffset/2) + robotCenterToCoralOffset;
+    private static double leftScoreTravel = (-coralPoleOffset/2) - robotCenterToCoralOffset;
 
-    private static double rightScoreTravel = (coralPoleOffset/2) + robotCenterToCoralOffset;
+    private static double rightScoreTravel = (coralPoleOffset/2) - robotCenterToCoralOffset;
 
     public static Transform2d leftScoreTransform = new Transform2d(scoreMovementVerticalTravel, leftScoreTravel, new Rotation2d());
 
@@ -83,7 +83,7 @@ public final class Constants {
       new Pose2d(13. + angledXOffset,4 - angledYoffset, Rotation2d.fromDegrees(180-60))
     };
 
-    public static Transform2d scoreOffset = new Transform2d(0, 0.03, new Rotation2d());
+    public static Transform2d scoreOffset = new Transform2d(0, 0.06, new Rotation2d());
 
     public static Pose2d rightIntakeBlue =new Pose2d(1,1, Rotation2d.fromDegrees(-125+180)).transformBy(new Transform2d(0,.01, new Rotation2d()));
     public static Pose2d rightIntakeRed =new Pose2d(16.5,1, Rotation2d.fromDegrees(-55+180)).transformBy(new Transform2d(0,.01, new Rotation2d()));
@@ -133,7 +133,7 @@ public final class Constants {
 
     public static double kAlgaeElevatorStall = 0.3;
 
-    public static double kAlgaeWristrStallMulti = 0.1;
+    public static double kAlgaeWristrStallMulti = 0.17;
 
 
     public static double kCoralWristP = 1;
@@ -146,6 +146,7 @@ public final class Constants {
     public static double kCoralElevatorStall = 0.05;
 
     public static double kCoralWristrStallMulti = 0.1;
+    public static double kNoCoralWristrStallMulti = 0.15;
   }
 
   public static final class MotorIDs {

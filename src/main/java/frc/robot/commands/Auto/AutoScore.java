@@ -32,6 +32,8 @@ public class AutoScore extends Command {
   private Command drivePath2;
   private Command mainCommand;
 
+  private boolean autoEnding = false;
+
   private boolean use2Paths = false;
 
   private boolean doneWithPath1 = false;
@@ -53,9 +55,16 @@ public class AutoScore extends Command {
     this.m_robotStateController = robotStateController;
     this.m_coralSubsystem = coralSubsystem;
     this.use2Paths = use2Paths;
-    addRequirements(driveSubsystem, robotStateController);
   }
-
+  public AutoScore(DriveSubsystem driveSubsystem, CoralSubsystem coralSubsystem, RobotStateController robotStateController, boolean use2Paths, boolean autoEnding) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    // addRequirements(robotStateController, driveSubsystem, coralSubsystem);
+    this.m_robotDrive = driveSubsystem;
+    this.m_robotStateController = robotStateController;
+    this.use2Paths = use2Paths;
+    this.m_coralSubsystem = coralSubsystem;
+    this.autoEnding = autoEnding;
+  }
 
 
   // Called when the command is initially scheduled.
@@ -67,12 +76,11 @@ public class AutoScore extends Command {
     drivePath2 = AutoBuilder.followPath(getScorePath());
     
 
-    if(use2Paths) {
-      mainCommand = drivePath1.andThen(drivePath2);
-    }else{
-      mainCommand = AutoBuilder.followPath(getPath(m_robotDrive.getPose(), m_robotStateController.getTargetPose().transformBy(m_robotStateController.getScoreTransform()).transformBy(FieldPositions.scoreOffset)));
-    }
+    mainCommand = AutoBuilder.followPath(getPath(m_robotDrive.getPose(), m_robotStateController.getTargetPose().transformBy(m_robotStateController.getScoreTransform()).transformBy(FieldPositions.scoreOffset)));
+    
     mainCommand.initialize();
+
+    if(autoEnding) mainCommand.schedule();
     // drivePath2.initialize();
 
   }
@@ -80,7 +88,7 @@ public class AutoScore extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    mainCommand.execute();
+    if(!autoEnding) mainCommand.execute();
     // if(doneWithPath1){
     //   part1();
     // }else{
@@ -88,19 +96,19 @@ public class AutoScore extends Command {
     // }
   }
 
-  private void part1(){
+  // private void part1(){
 
-    drivePath1.execute();
+  //   drivePath1.execute();
     
-    if(drivePath1.isFinished()){ 
-      doneWithPath1 = true;
-    }
-  }
+  //   if(drivePath1.isFinished()){ 
+  //     doneWithPath1 = true;
+  //   }
+  // }
 
-  private void part2(){
-    drivePath2.execute();
-    // m_coralSubsystem.setManipulatorPos(m_robotStateController.getElevatorScorePos(), m_robotStateController.getWristScorePos());
-  }
+  // private void part2(){
+  //   drivePath2.execute();
+  //   // m_coralSubsystem.setManipulatorPos(m_robotStateController.getElevatorScorePos(), m_robotStateController.getWristScorePos());
+  // }
 
   // Called once the command ends or is interrupted.
   @Override

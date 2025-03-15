@@ -5,23 +5,18 @@
 package frc.robot.subsystems.Manipulators;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Configs;
-import frc.robot.Constants.ManipulatorGearRatios;
 import frc.robot.Constants.MotorIDs;
 import frc.robot.Constants.PIDConstants;
 
@@ -47,6 +42,9 @@ public class CoralSubsystem extends SubsystemBase {
   private PIDController wristPIDController = new PIDController(PIDConstants.kCoralWristP, PIDConstants.kCoralWristI, PIDConstants.kCoralWristD);
 
   private boolean hasCoral = true;
+
+  public DigitalInput m_beamBreak = new DigitalInput(9);
+
   /** Creates a new CoralSubsystem. */
   public CoralSubsystem() {
     // m_leftElevatorMotor.configure(followConfig.follow(21, true), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -62,11 +60,13 @@ public class CoralSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("motor 20 current", m_leftElevatorMotor.getOutputCurrent());
     SmartDashboard.putNumber("motor 21 current", m_rightElevatorMotor.getOutputCurrent());
     SmartDashboard.putNumber("elevator speed", getElevatorSpeed());
+    SmartDashboard.putBoolean("beam break", m_beamBreak.get());
+    SmartDashboard.putNumber("coral intake current", getCoralMotorCurrent());
     
   }
 
   public double getCoralMotorCurrent(){
-    return m_coralMotor.getOutputCurrent();
+    return m_coralMotor.getOutputCurrent() * (m_coralMotor.getEncoder().getVelocity()/-5000);
   }
 
   public boolean hasCoral(){
@@ -81,14 +81,14 @@ public class CoralSubsystem extends SubsystemBase {
     
     double elevatorPIDvalue = elevatorPIDController.calculate(getElevatorPos(), elevatorPos);
     double wristPIDValue = wristPIDController.calculate(getWristPos(), wristPos);
-    double wristStall = Math.cos(2*Math.PI*(getWristPos()-0.15)) * PIDConstants.kCoralWristrStallMulti;
+    double wristStall = Math.cos(2*Math.PI*(getWristPos()-0.15)) * (hasCoral ? PIDConstants.kCoralWristrStallMulti : PIDConstants.kNoCoralWristrStallMulti);
 
     setWristPercentOutput(wristStall + wristPIDValue);
 
 
     SmartDashboard.putNumber("command wrist pid out", wristPIDValue + wristStall);
 
-    double maxElevatorPercent = getElevatorSpeed()/4000+.2;
+    double maxElevatorPercent = getElevatorSpeed()/4000+.3;
 
     elevatorPIDvalue = MathUtil.clamp(elevatorPIDvalue, -maxElevatorPercent, maxElevatorPercent);
 
