@@ -24,7 +24,7 @@ public class CoralDefault extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    goDown = new SetCoralPosition(m_coralSubsystem, 0, 0.13);
+    goDown = new SetCoralPosition(m_coralSubsystem, 0, 0.2);
     goDown.initialize();
   }
 
@@ -37,6 +37,7 @@ public class CoralDefault extends Command {
     }else{
       m_coralSubsystem.setElevatorPercentOutput(0);
       m_coralSubsystem.setWristPercentOutput(0);
+      // m_coralSubsystem.setManipulatorPos(0, 0.2);
     }
     m_coralSubsystem.setIntakePercentOutput(0);
   }

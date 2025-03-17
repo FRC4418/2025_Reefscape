@@ -156,7 +156,7 @@ public class RobotContainer {
     m_CommandXboxControllerDriver.povUp().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL4, ManipulatorPositions.kCoralWristPosL4));
     m_CommandXboxControllerDriver.povRight().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL3, ManipulatorPositions.kCoralWristPosL3));
     m_CommandXboxControllerDriver.povLeft().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL2, ManipulatorPositions.kCoralWristPosL2));
-    m_CommandXboxControllerDriver.povDown().whileTrue(new SetCoralPosition(m_coralSubsystem, 0.1, 0.15));
+    m_CommandXboxControllerDriver.povDown().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, 0.1, 0.135));
 
     // m_CommandXboxControllerDriver.povUp().whileTrue(new SetCoralPositionMotorsPercentOutput(m_coralSubsystem, 0.2, 0));
 
