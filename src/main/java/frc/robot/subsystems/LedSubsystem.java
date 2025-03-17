@@ -27,6 +27,7 @@ import frc.robot.Configs;
 
 public class LedSubsystem extends SubsystemBase {
   private AddressableLED m_led = new AddressableLED(0);
+  // private AddressableLED m_led2 = new AddressableLED(1);
   private AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(104);
   private AddressableLEDBufferView leftView = ledBuffer.createView(0, 51);
   private AddressableLEDBufferView rightView = ledBuffer.createView(52, 103).reversed();
@@ -45,6 +46,7 @@ public class LedSubsystem extends SubsystemBase {
   public LedSubsystem() {
     rainbow = rainbow.scrollAtAbsoluteSpeed(MetersPerSecond.of(.25), kLedSpacing);
     m_led.setLength(ledBuffer.getLength());
+    // m_led2.setLength(ledBuffer.getLength());
     setPattern(red);
   }
 
@@ -55,6 +57,8 @@ public class LedSubsystem extends SubsystemBase {
     pattern.applyTo(rightView);
     m_led.setData(ledBuffer);
     m_led.start();
+    // m_led2.setData(ledBuffer);
+    // m_led2.start();
   }
 
   public void setEnabledPattern(LEDPattern pattern){

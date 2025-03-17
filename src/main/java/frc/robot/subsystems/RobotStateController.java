@@ -141,11 +141,11 @@ public class RobotStateController extends SubsystemBase {
 
 
 
-    if(m_coralSubsystem.hasCoral()){
-      setBaseLEDPattern(base.blink(Units.Second.of(.5)));
-    }else{
-      setBaseLEDPattern(base);
-    }
+    // if(m_coralSubsystem.hasCoral()){
+    //   setBaseLEDPattern(base.blink(Units.Second.of(.5)));
+    // }else{
+    //   setBaseLEDPattern(base);
+    // }
 
     Logger.recordOutput("Elevator Target Pose", getElevatorScorePos());
 
