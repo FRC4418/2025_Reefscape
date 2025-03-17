@@ -105,9 +105,9 @@ public final class Constants {
     public static double kCoralElevatorPosL1 = 0;
 
     public static double kCoralWristPosIntake = -0.959931088597;
-    public static double kCoralWristPosL4 = 0.47;
-    public static double kCoralWristPosL3 = .47;
-    public static double kCoralWristPosL2 = .47;
+    public static double kCoralWristPosL4 = 0.4;
+    public static double kCoralWristPosL3 = 0.4;
+    public static double kCoralWristPosL2 = 0.4;
     public static double kCoralWristPosL1 = 1.57254165605;
     
 
@@ -211,7 +211,7 @@ public final class Constants {
     public static final int kFrontRightTurningCanId = 3;
     public static final int kRearRightTurningCanId = 1;
 
-    public static final boolean kGyroReversed = true;
+    public static final boolean kGyroReversed = false;
 
   }
 

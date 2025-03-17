@@ -45,6 +45,8 @@ public class CoralSubsystem extends SubsystemBase {
 
   public DigitalInput m_beamBreak = new DigitalInput(9);
 
+  public DigitalInput m_limitSwitch = new DigitalInput(0);
+
   /** Creates a new CoralSubsystem. */
   public CoralSubsystem() {
     // m_leftElevatorMotor.configure(followConfig.follow(21, true), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -61,8 +63,8 @@ public class CoralSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("motor 21 current", m_rightElevatorMotor.getOutputCurrent());
     SmartDashboard.putNumber("elevator speed", getElevatorSpeed());
     SmartDashboard.putBoolean("beam break", m_beamBreak.get());
+    SmartDashboard.putBoolean("limit switch", m_limitSwitch.get());
     SmartDashboard.putNumber("coral intake current", getCoralMotorCurrent());
-    
   }
 
   public double getCoralMotorCurrent(){
@@ -70,7 +72,7 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   public boolean hasCoral(){
-    return hasCoral;
+    return m_beamBreak.get();
   }
 
   public void setHasCoral(boolean has){
@@ -115,8 +117,8 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   public void setWristPercentOutput(double speed){
-    if(speed > .5) speed = .5;
-    if(speed < -.5) speed = -.5;
+    if(speed > .3) speed = .4;
+    if(speed < -.3) speed = -.4;
     m_wristMotor.set(-speed);
     SmartDashboard.putNumber("wrist percent", -speed);
   }

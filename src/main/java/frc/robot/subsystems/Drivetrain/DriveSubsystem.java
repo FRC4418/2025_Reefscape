@@ -286,7 +286,7 @@ public class DriveSubsystem extends SubsystemBase {
       if(ll4mt2.avgTagDist < ll3mt2.avgTagDist){
         mt2 = ll4mt2;
       }else{
-        mt2 = ll3mt2;
+        mt2 = ll3mt2;//change to ll3
       }
 
       if(Math.abs(getTurnRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
@@ -297,12 +297,15 @@ public class DriveSubsystem extends SubsystemBase {
       {
         doRejectUpdate = true;
       }
+
+      if(mt2.tagCount == 1 && mt2.avgTagDist > 5) doRejectUpdate = true;
       if(!doRejectUpdate)
       {
         m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
         m_poseEstimator.addVisionMeasurement(
             mt2.pose,
             mt2.timestampSeconds);
+        Logger.recordOutput("vision estimated pose", mt2.pose);
       }
     }
   }
@@ -390,7 +393,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
-    m_gyro.reset();
+    absoluteGyroOffset = -getYaw();
   }
 
   public void zeroTeleopHeading(){
@@ -426,11 +429,11 @@ public class DriveSubsystem extends SubsystemBase {
    * @return The turn rate of the robot, in degrees per second
    */
   public double getTurnRate() {
-    return m_gyro.getRate() * (DriveConstants.kGyroReversed ? -1 : 1);
+    return LimelightHelpers.getIMUData("limelight-four").accelY * (DriveConstants.kGyroReversed ? -1 : 1);
   }
 
   
   public double getYaw(){
-    return m_gyro.getAngle() * (DriveConstants.kGyroReversed ? -1 : 1) + absoluteGyroOffset;
+    return LimelightHelpers.getIMUData("limelight-four").Yaw * (DriveConstants.kGyroReversed ? -1 : 1) + absoluteGyroOffset;
   }
 }

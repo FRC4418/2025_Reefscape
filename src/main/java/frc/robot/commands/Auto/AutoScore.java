@@ -145,7 +145,7 @@ public class AutoScore extends Command {
 
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(poses);
 
-    PathConstraints constraints = new PathConstraints(1, .5, 2 * Math.PI, 4 * Math.PI);
+    PathConstraints constraints = new PathConstraints(1.5, 1, 2 * Math.PI, 4 * Math.PI);
 
     return new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0, m_robotStateController.getTargetPose().getRotation()));
   }

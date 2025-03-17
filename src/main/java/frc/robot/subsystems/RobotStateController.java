@@ -12,6 +12,7 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
@@ -20,11 +21,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.FieldPositions;
 import frc.robot.subsystems.Drivetrain.DriveSubsystem;
+import frc.robot.subsystems.Manipulators.CoralSubsystem;
 
 public class RobotStateController extends SubsystemBase {
   private boolean coralMode;
   private LedSubsystem m_ledSubsystem;
   private DriveSubsystem m_robotDrive;
+  private CoralSubsystem m_coralSubsystem;
 
   private Pose2d targetPose2d = FieldPositions.GHPose[1];
 
@@ -47,12 +50,13 @@ public class RobotStateController extends SubsystemBase {
   Distance ledSpacing = Meters.of(1 / 120.0);
 
 
+  LEDPattern base;
 
   /** Creates a new ModeController. */
-  public RobotStateController(LedSubsystem ledSubsystem, DriveSubsystem driveSubsystem) {
+  public RobotStateController(LedSubsystem ledSubsystem, CoralSubsystem coralSubsystem, DriveSubsystem driveSubsystem) {
     m_ledSubsystem = ledSubsystem;
     m_robotDrive = driveSubsystem;
-
+    m_coralSubsystem = coralSubsystem;
     
     var alliance = DriverStation.getAlliance();
     if (alliance.isPresent()) {
@@ -62,10 +66,19 @@ public class RobotStateController extends SubsystemBase {
       driveSubsystem.absoluteGyroOffset = 180;
     }
 
-    LEDPattern base = (isOnRed ? redGrad : blueGrad);
     
-    m_ledSubsystem.setEnabledPattern(base.scrollAtRelativeSpeed(Hertz.of(.5)));
+    base = (isOnRed ? redGrad : blueGrad);
+
+    base = base.scrollAtRelativeSpeed(Hertz.of(.5));
+    
+    m_ledSubsystem.setEnabledPattern(base);
   }
+
+  public void setBaseLEDPattern(LEDPattern ledPattern){
+    m_ledSubsystem.setEnabledPattern(ledPattern);
+  }
+
+  // public void setLedTeleopPattern(le)
 
   public void setCoralMode(boolean mode){
     coralMode = mode;
@@ -126,6 +139,13 @@ public class RobotStateController extends SubsystemBase {
     }
 
 
+
+
+    if(m_coralSubsystem.hasCoral()){
+      setBaseLEDPattern(base.blink(Units.Second.of(.5)));
+    }else{
+      setBaseLEDPattern(base);
+    }
 
     Logger.recordOutput("Elevator Target Pose", getElevatorScorePos());
 

@@ -37,7 +37,6 @@ public class ClimberSubsystem extends SubsystemBase {
 
   public void setPercentSpeed(double percent){
 
-    if(percent < 0 && getPosition() <= 0) percent = 0;
     if(percent > 0 && getPosition() >= 370) percent = 0;
     if(canRun== false) return;
     m_climberMotor.set(percent);
@@ -49,9 +48,9 @@ public class ClimberSubsystem extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("climber pos", getPosition());
     if((percent < 0 && getPosition() < 0)||(percent > 0 && getPosition() > 320) ){
-      canRun = false;
+      // canRun = false;
     }else{
-      canRun = true;
+      // canRun = true;
     }
     
     // System.out.println(m_encoder.getPosition());
