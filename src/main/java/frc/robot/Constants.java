@@ -178,7 +178,7 @@ public final class Constants {
     public static final double kRotationalSlewRate = 10.0; // percent per second (1 = 100%)
 
     // Chassis configuration
-    public static double robotWidth = 28;
+    public static double robotWidth = 28; // wheel to wheel distance
 
     public static double robotRadius = (Math.sqrt(2*Math.pow(robotWidth, 2))/2)*0.254;
 
