@@ -43,22 +43,31 @@ public class CoralSubsystem extends SubsystemBase {
 
   private boolean hasCoral = true;
 
+  private boolean isInfunnel = false;
+
+  private double falconOffset = 0;
+
   public DigitalInput m_beamBreak = new DigitalInput(9);
 
   public DigitalInput m_limitSwitch = new DigitalInput(0);
 
   /** Creates a new CoralSubsystem. */
   public CoralSubsystem() {
+    resetFalconToSpark();
     // m_leftElevatorMotor.configure(followConfig.follow(21, true), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
   public void periodic() {
-    if(getCoralMotorCurrent() > 50) hasCoral = true;
-    SmartDashboard.putBoolean("has coral", hasCoral);
+    hasCoral = getLimitSwitch();
+    if(getBeamBreak()) isInfunnel = true;
+    if(hasCoral && isInfunnel) isInfunnel = false;
+    SmartDashboard.putBoolean("has coral", hasCoral());
+    SmartDashboard.putBoolean("is in funnel", isInFunnel());
     SmartDashboard.putNumber("current thing", getCoralMotorCurrent());
     SmartDashboard.putNumber("coral elevator pos", getElevatorPos());
-    SmartDashboard.putNumber("coral wrist pos", getWristPos());
+    SmartDashboard.putNumber("wrist pos", getWristPos());
+    SmartDashboard.putNumber("falcon pos", getFalconPos());
     SmartDashboard.putNumber("motor 20 current", m_leftElevatorMotor.getOutputCurrent());
     SmartDashboard.putNumber("motor 21 current", m_rightElevatorMotor.getOutputCurrent());
     SmartDashboard.putNumber("elevator speed", getElevatorSpeed());
@@ -72,18 +81,26 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   public boolean hasCoral(){
-    return m_beamBreak.get();
+    return hasCoral;
   }
 
-  public void setHasCoral(boolean has){
-    hasCoral = has;
+  public boolean isInFunnel(){
+    return isInfunnel;
+  }
+
+  public boolean getLimitSwitch(){
+    return m_limitSwitch.get();
+  }
+
+  public boolean getBeamBreak(){
+    return m_beamBreak.get();
   }
 
   public void setManipulatorPos(double elevatorPos, double wristPos){
     
     double elevatorPIDvalue = elevatorPIDController.calculate(getElevatorPos(), elevatorPos);
     double wristPIDValue = wristPIDController.calculate(getWristPos(), wristPos);
-    double wristStall = Math.cos(2*Math.PI*(getWristPos()-0.15)) * (hasCoral ? PIDConstants.kCoralWristrStallMulti : PIDConstants.kNoCoralWristrStallMulti);
+    double wristStall = Math.cos(2*Math.PI*(getWristPos()-0.13)) * (hasCoral ? PIDConstants.kCoralWristrStallMulti : PIDConstants.kNoCoralWristrStallMulti);
 
     setWristPercentOutput(wristStall + wristPIDValue);
 
@@ -94,12 +111,7 @@ public class CoralSubsystem extends SubsystemBase {
 
     elevatorPIDvalue = MathUtil.clamp(elevatorPIDvalue, -maxElevatorPercent, maxElevatorPercent);
 
-    if(elevatorPos - 2 < getElevatorPos()  || getElevatorPos() < elevatorPIDvalue + 2){
-      setElevatorPercentOutput(elevatorPIDvalue);
-    }else{
-      // setPosFancy(elevatorPos);
-      setElevatorPercentOutput(elevatorPIDvalue);
-    }
+    setElevatorPercentOutput(elevatorPIDvalue);
   }
 
   public void setPosFancy(double pos){
@@ -112,13 +124,29 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   public double getWristPos(){
-    double pos = m_wristEncoder.getPosition();
-    return pos > 0.9 ? 0 : pos;
+    double sparkPos = m_wristEncoder.getPosition();
+    sparkPos = sparkPos > 0.9 ? 0 : sparkPos;
+
+    double falconPos = getFalconPos();
+
+    if(sparkPos - falconPos > 0.1 || sparkPos - falconPos < -0.1){
+      return falconPos;
+      // resetFalconToSpark();
+    }
+    return sparkPos;
+  }
+
+  public double getFalconPos(){
+    return -m_wristMotor.getPosition().getValueAsDouble()/9 + falconOffset;
+  }
+
+  public void resetFalconToSpark(){
+    falconOffset = m_wristEncoder.getPosition() - getFalconPos();
   }
 
   public void setWristPercentOutput(double speed){
-    if(speed > .3) speed = .4;
-    if(speed < -.3) speed = -.4;
+    if(speed > .5) speed = .5;
+    if(speed < -.5) speed = -.5;
     m_wristMotor.set(-speed);
     SmartDashboard.putNumber("wrist percent", -speed);
   }

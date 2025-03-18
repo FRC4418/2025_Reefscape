@@ -16,6 +16,7 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -49,6 +50,7 @@ public class RobotStateController extends SubsystemBase {
 
   Distance ledSpacing = Meters.of(1 / 120.0);
 
+  Timer timer = new Timer();
 
   LEDPattern base;
 
@@ -141,11 +143,24 @@ public class RobotStateController extends SubsystemBase {
 
 
 
-    // if(m_coralSubsystem.hasCoral()){
-    //   setBaseLEDPattern(base.blink(Units.Second.of(.5)));
-    // }else{
-    //   setBaseLEDPattern(base);
-    // }
+    if(m_coralSubsystem.hasCoral()){
+      LEDPattern green = LEDPattern.solid(Color.kRed);
+      setBaseLEDPattern(green.blink(Units.Second.of(.1)));
+
+      if(timer.get() > 2) {
+        setBaseLEDPattern(base);
+      }
+      if(!timer.isRunning()){
+        timer.reset();
+        timer.start();
+      }
+    }else if(m_coralSubsystem.isInFunnel()) {
+      LEDPattern red = LEDPattern.solid(Color.kGreen);
+      setBaseLEDPattern(red.blink(Units.Second.of(.1)));
+    }else{
+      setBaseLEDPattern(base);
+      timer.stop();
+    }
 
     Logger.recordOutput("Elevator Target Pose", getElevatorScorePos());
 

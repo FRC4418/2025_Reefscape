@@ -10,6 +10,8 @@ import java.text.FieldPosition;
 import org.json.simple.parser.ParseException;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.FileVersionException;
 
@@ -156,7 +158,7 @@ public class RobotContainer {
     m_CommandXboxControllerDriver.povUp().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL4, ManipulatorPositions.kCoralWristPosL4));
     m_CommandXboxControllerDriver.povRight().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL3, ManipulatorPositions.kCoralWristPosL3));
     m_CommandXboxControllerDriver.povLeft().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL2, ManipulatorPositions.kCoralWristPosL2));
-    m_CommandXboxControllerDriver.povDown().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, 0.1, 0.135));
+    m_CommandXboxControllerDriver.povDown().whileTrue(new SetCoralPosition(m_coralSubsystem, 0.1, 0.135));
 
     // m_CommandXboxControllerDriver.povUp().whileTrue(new SetCoralPositionMotorsPercentOutput(m_coralSubsystem, 0.2, 0));
 
@@ -170,8 +172,8 @@ public class RobotContainer {
 
     m_climber.setDefaultCommand(new SetClimberPercentSpeed(m_climber, 0));
 
-    // m_coralSubsystem.setDefaultCommand(new CoralDefault(m_coralSubsystem));
-    m_coralSubsystem.setDefaultCommand(new SetCoralIntakePercentSpeed(m_coralSubsystem, 0).alongWith(new SetCoralPositionMotorsPercentOutput(m_coralSubsystem, 0, 0)));
+    m_coralSubsystem.setDefaultCommand(new CoralDefault(m_coralSubsystem));
+    // m_coralSubsystem.setDefaultCommand(new SetCoralIntakePercentSpeed(m_coralSubsystem, 0).alongWith(new SetCoralPositionMotorsPercentOutput(m_coralSubsystem, 0, 0)));
   }
 
   public void addAutoOptions(){
@@ -205,6 +207,10 @@ public class RobotContainer {
     }
   }
 
+  public Command getDrivePath(String name){
+    return new InstantCommand();
+  }
+
   public Command getGoForward(){
     var path = getPath("Forward");
 
@@ -228,21 +234,55 @@ public class RobotContainer {
   }
 
   public Command center1p(){
+    var path = getPath("Forward");
+
+    Command resetPose = new InstantCommand(() -> m_robotDrive.resetOdometry(path.getStartingDifferentialPose()));
+
+    Command driveForward = AutoBuilder.followPath(path);
+
+    
+    var path2 = getPath("Go Back");
+
+
+    Command driveBack = AutoBuilder.followPath(path2);
+    
     // Command setupScorePos = new InstantCommand( () -> m_robotStateController.setScoreManipulatorPos(ManipulatorPositions.kCoralElevatorPosL4, ManipulatorPositions.kCoralWristPosL4) )
     // .alongWith( new InstantCommand( () -> m_robotStateController.setTargetAndScorePos(FieldPositions.GHPose, false) ))
     // .andThen(new WaitCommand(0.5));
     // Command score = new AutoScore(m_robotDrive, m_coralSubsystem, m_robotStateController, false, true).
     // alongWith(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL3, ManipulatorPositions.kCoralWristPosL3));
 
-    Command outTake = new SetCoralIntakePercentSpeed(m_coralSubsystem, 1).alongWith(new SetCoralPositionToTarget(m_coralSubsystem, m_robotStateController));
+    Command outTake = new SetCoralIntakePercentSpeed(m_coralSubsystem, 1).alongWith(new SetCoralPosition(m_coralSubsystem, 0, 0.2)).raceWith(new WaitCommand(3));
 
     // return getGoForward().andThen(setupScorePos.andThen(score).andThen(outTake));
 
-    Command setTarget = new InstantCommand(() -> m_robotStateController.setTargetAndScorePos(FieldPositions.GHPose, true));
+    Command setTarget = new InstantCommand(() -> m_robotStateController.setTargetAndScorePos(FieldPositions.GHPose, false));
 
-    Command setup = new AutoScore(m_robotDrive, m_coralSubsystem, m_robotStateController, false, true).raceWith(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL4, ManipulatorPositions.kCoralWristPosL4));
+    Command align = new AutoScore(m_robotDrive, m_coralSubsystem, m_robotStateController, false, true).raceWith(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL4, ManipulatorPositions.kCoralWristPosL4));
 
-    return new SequentialCommandGroup(getGoForward(), setTarget, setup, outTake, new CoralDefault(m_coralSubsystem));
+
+    return new SequentialCommandGroup(resetPose, setTarget, align, outTake, driveBack);
+  }
+
+
+  public Command right1p(){
+    var path = getPath("Right 1");
+
+    Command resetPose = new InstantCommand(() -> m_robotDrive.resetOdometry(path.getStartingDifferentialPose()));
+
+    Command drive = resetPose.andThen(AutoBuilder.followPath(path));
+
+    return drive;
+  }
+
+  public Command left1p(){
+    var path = getPath("Left 1");
+
+    Command resetPose = new InstantCommand(() -> m_robotDrive.resetOdometry(path.getStartingDifferentialPose()));
+
+    Command drive = resetPose.andThen(AutoBuilder.followPath(path));
+
+    return drive;
   }
   
  
@@ -258,7 +298,8 @@ public class RobotContainer {
   }
   
   public Command getAutonomousCommand() {
-    return chooser.getSelected();
+    //return chooser.getSelected();
     // return center1p();
+    return getGoForward().andThen(new SetCoralIntakePercentSpeed(m_coralSubsystem, 1).raceWith(new WaitCommand(2)));
   }
 }

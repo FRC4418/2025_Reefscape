@@ -271,7 +271,7 @@ public class DriveSubsystem extends SubsystemBase {
       LimelightHelpers.SetRobotOrientation("limelight-four", getPose().getRotation().getDegrees(), getTurnRate(), 0, 0, 0, 0);
       LimelightHelpers.PoseEstimate ll4mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-four");
 
-      LimelightHelpers.SetRobotOrientation("limelight-three", getPose().getRotation().getDegrees(), getTurnRate(), 0, 0, 0, 0);
+      LimelightHelpers.SetRobotOrientation("limelight-four", getPose().getRotation().getDegrees(), getTurnRate(), 0, 0, 0, 0);
       LimelightHelpers.PoseEstimate ll3mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-three");
 
       
@@ -286,7 +286,7 @@ public class DriveSubsystem extends SubsystemBase {
       if(ll4mt2.avgTagDist < ll3mt2.avgTagDist){
         mt2 = ll4mt2;
       }else{
-        mt2 = ll3mt2;//change to ll3
+        mt2 = ll4mt2;//change to ll3
       }
 
       if(Math.abs(getTurnRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates

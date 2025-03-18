@@ -37,7 +37,6 @@ public class CoralDefault extends Command {
     }else{
       m_coralSubsystem.setElevatorPercentOutput(0);
       m_coralSubsystem.setWristPercentOutput(0);
-      // m_coralSubsystem.setManipulatorPos(0, 0.2);
     }
     m_coralSubsystem.setIntakePercentOutput(0);
   }
