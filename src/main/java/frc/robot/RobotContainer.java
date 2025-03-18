@@ -142,36 +142,42 @@ public class RobotContainer {
 
     SmartDashboard.putData("Reset Pose to Targer", new InstantCommand( () -> m_robotDrive.resetOdometry(m_robotStateController.getTargetPose()) ));
 
+    m_coralSubsystem.setDefaultCommand(new SetCoralIntakePercentSpeed(m_coralSubsystem, 0).alongWith(new SetCoralPositionMotorsPercentOutput(m_coralSubsystem, 0, 0)));
+
     m_CommandXboxControllerDriver.y().onTrue(new InstantCommand( () -> m_robotDrive.zeroTeleopHeading()));
 
     m_CommandXboxControllerDriver.a().toggleOnTrue(new AutoScore(m_robotDrive, m_coralSubsystem, m_robotStateController, false).alongWith(new SetCoralPositionToTarget(m_coralSubsystem, m_robotStateController)));
 
-    m_CommandXboxControllerDriver.b().whileTrue(new SetCoralIntakePercentSpeed(m_coralSubsystem, 1));
+    m_CommandXboxControllerDriver.leftBumper().whileTrue(new SetCoralIntakePercentSpeed(m_coralSubsystem, 1));
+    m_CommandXboxControllerDriver.leftBumper().whileFalse(new SetCoralIntakePercentSpeed(m_coralSubsystem, 0));
 
-    m_CommandXboxControllerDriver.x().whileTrue(new SetCoralIntakePercentSpeed(m_coralSubsystem, -1));
+    m_CommandXboxControllerDriver.rightBumper().whileTrue(new SetCoralIntakePercentSpeed(m_coralSubsystem, -1));
+    m_CommandXboxControllerDriver.rightBumper().whileFalse(new SetCoralIntakePercentSpeed(m_coralSubsystem, 0));
 
-    // m_CommandXboxControllerDriver.rightBumper().toggleOnTrue(new AutoIntake(m_robotDrive, m_robotStateController, m_coralSubsystem).
-    //   raceWith(new IntakeUntillGood(m_coralSubsystem, 1))  );
+
+    // m_CommandXboxControllerDriver.x().
+    //   (new SetCoralIntakePercentSpeed(m_coralSubsystem, -1));
+
+    // m_CommandXboxControllerDriver.x().toggleOnTrue(new AutoIntake(m_robotDrive, m_robotStateController, m_coralSubsystem.raceWith(new IntakeUntillGood(m_coralSubsystem, 1))));
 
     m_CommandXboxControllerDriver.povUp().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL4, ManipulatorPositions.kCoralWristPosL4));
     m_CommandXboxControllerDriver.povRight().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL3, ManipulatorPositions.kCoralWristPosL3));
     m_CommandXboxControllerDriver.povLeft().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL2, ManipulatorPositions.kCoralWristPosL2));
-    m_CommandXboxControllerDriver.povDown().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, 0.1, 0.135));
+    m_CommandXboxControllerDriver.povDown().toggleOnTrue(new SetCoralPosition(m_coralSubsystem, 0.1, 0.3));
 
     // m_CommandXboxControllerDriver.povUp().whileTrue(new SetCoralPositionMotorsPercentOutput(m_coralSubsystem, 0.2, 0));
 
-    // m_CommandXboxControllerDriver.rightBumper().toggleOnTrue(new AutoIntake(m_robotDrive, m_robotStateController, m_coralSubsystem));
+    // m_CommandXboxControllerDriver.x().toggleOnTrue(new AutoIntake(m_robotDrive, m_robotStateController, m_coralSubsystem));
 
-    m_CommandXboxControllerDriver.rightBumper().toggleOnTrue(new IntakeUntillGood(m_coralSubsystem, -.5));
+    // m_CommandXboxControllerDriver.rightBumper().toggleOnTrue(new IntakeUntillGood(m_coralSubsystem, -.5));
 
 
-    m_CommandXboxControllerDriver.rightTrigger().whileTrue(new SetClimberPercentSpeed(m_climber, 0.5));
-    m_CommandXboxControllerDriver.leftTrigger().whileTrue(new SetClimberPercentSpeed(m_climber, -0.5));
+    m_CommandXboxControllerDriver.rightTrigger().whileTrue(new SetClimberPercentSpeed(m_climber, 0.75));
+    m_CommandXboxControllerDriver.leftTrigger().whileTrue(new SetClimberPercentSpeed(m_climber, -0.75));
 
     m_climber.setDefaultCommand(new SetClimberPercentSpeed(m_climber, 0));
 
     // m_coralSubsystem.setDefaultCommand(new CoralDefault(m_coralSubsystem));
-    m_coralSubsystem.setDefaultCommand(new SetCoralIntakePercentSpeed(m_coralSubsystem, 0).alongWith(new SetCoralPositionMotorsPercentOutput(m_coralSubsystem, 0, 0)));
   }
 
   public void addAutoOptions(){

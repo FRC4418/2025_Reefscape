@@ -102,12 +102,12 @@ public final class Constants {
     public static double kCoralElevatorPosL4 = 132;
     public static double kCoralElevatorPosL3 = 72+3;
     public static double kCoralElevatorPosL2 = 36+3;
-    public static double kCoralElevatorPosL1 = 0;
+    public static double kCoralElevatorPosL1 = 0.1;
 
     public static double kCoralWristPosIntake = -0.959931088597;
-    public static double kCoralWristPosL4 = 0.4;
-    public static double kCoralWristPosL3 = 0.4;
-    public static double kCoralWristPosL2 = 0.4;
+    public static double kCoralWristPosL4 = 0.65;
+    public static double kCoralWristPosL3 = 0.65;
+    public static double kCoralWristPosL2 = 0.65;
     public static double kCoralWristPosL1 = 1.57254165605;
     
 
@@ -138,15 +138,15 @@ public final class Constants {
 
     public static double kCoralWristP = 1;
     public static double kCoralWristI = 0.05;
-    public static double kCoralWristD = 0.1;
+    public static double kCoralWristD = 0.15;
 
     public static double kCoralWristMaxVel = 0.2;
     public static double kCoralWristMaxAccel = 0.1;
 
     public static double kCoralElevatorStall = 0.05;
 
-    public static double kCoralWristrStallMulti = 0.1;
-    public static double kNoCoralWristrStallMulti = 0.15;
+    public static double kCoralWristrStallMulti = 0.3;
+    public static double kNoCoralWristrStallMulti = 0.1;
   }
 
   public static final class MotorIDs {

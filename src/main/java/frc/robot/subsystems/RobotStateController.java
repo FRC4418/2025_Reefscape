@@ -37,7 +37,7 @@ public class RobotStateController extends SubsystemBase {
 
   private double elevatorScorePos = 0;
 
-  private double wristScorePos = 0.479;
+  private double wristScorePos = 0.6;
 
   private boolean isOnRed = false;
 

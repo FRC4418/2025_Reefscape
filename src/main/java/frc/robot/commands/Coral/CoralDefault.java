@@ -24,7 +24,7 @@ public class CoralDefault extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    goDown = new SetCoralPosition(m_coralSubsystem, 0, 0.2);
+    goDown = new SetCoralPosition(m_coralSubsystem, 0, 0.3);
     goDown.initialize();
   }
 
