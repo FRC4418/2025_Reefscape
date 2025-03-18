@@ -4,6 +4,9 @@
 
 package frc.robot.subsystems.Vision;
 
+import java.lang.management.GarbageCollectorMXBean;
+import java.util.concurrent.locks.Lock;
+
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -21,6 +24,11 @@ public class VisionSubsystem extends SubsystemBase {
 
   public Pose3d targetPose3dRobotRelative(){
     return LimelightHelpers.getTargetPose3d_CameraSpace("limelight");
+  }
+
+  public Lock GarbageCollectorMXBean() {
+    System.out.println("Hello");
+        return null;
   }
 
 
