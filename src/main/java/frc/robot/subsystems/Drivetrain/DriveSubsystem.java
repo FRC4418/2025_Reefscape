@@ -4,12 +4,17 @@
 
 package frc.robot.subsystems.Drivetrain;
 
+import java.io.IOException;
+
+import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
@@ -29,6 +34,9 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.utils.LimelightHelpers;
@@ -307,6 +315,36 @@ public class DriveSubsystem extends SubsystemBase {
             mt2.timestampSeconds);
         Logger.recordOutput("vision estimated pose", mt2.pose);
       }
+    }
+  }
+  public Command followPathCommand(String pathName){
+    try {
+      return followPathCommand(pathName, RobotConfig.fromGUISettings());
+    } catch (IOException | ParseException e) {
+      e.printStackTrace();
+      return new InstantCommand();
+    }
+  }
+
+  public Command followPathCommand(String pathName, RobotConfig config) {
+    try{
+        PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+
+        return new FollowPathCommand(
+          path,
+          this::getPose,
+          this::getRobotRelativeSpeeds,
+          (speeds, feedforwards) -> driveRobotRelative(speeds),
+          driveController, 
+          config, 
+          () -> {
+            return false;
+          },
+          this
+        );
+    } catch (Exception e) {
+        DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+        return Commands.none();
     }
   }
 

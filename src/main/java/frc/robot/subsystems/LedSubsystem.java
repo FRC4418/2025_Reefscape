@@ -73,7 +73,7 @@ public class LedSubsystem extends SubsystemBase {
     }else if(DriverStation.isAutonomousEnabled()){
       setPattern(blue.breathe(Seconds.of(.5)));
     }else{
-      setPattern(rainbow);
+      setPattern(LEDPattern.solid(Color.kWhite));
     }
   }
 }

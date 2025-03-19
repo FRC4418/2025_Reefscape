@@ -167,8 +167,8 @@ public class RobotContainer {
     m_CommandXboxControllerDriver.rightBumper().toggleOnTrue(new IntakeUntillGood(m_coralSubsystem, -.5));
 
 
-    m_CommandXboxControllerDriver.rightTrigger().whileTrue(new SetClimberPercentSpeed(m_climber, 0.5));
-    m_CommandXboxControllerDriver.leftTrigger().whileTrue(new SetClimberPercentSpeed(m_climber, -0.5));
+    m_CommandXboxControllerDriver.rightTrigger().whileTrue(new SetClimberPercentSpeed(m_climber, 0.9));
+    m_CommandXboxControllerDriver.leftTrigger().whileTrue(new SetClimberPercentSpeed(m_climber, -0.9));
 
     m_climber.setDefaultCommand(new SetClimberPercentSpeed(m_climber, 0));
 
@@ -216,7 +216,8 @@ public class RobotContainer {
 
     Command resetPose = new InstantCommand(() -> m_robotDrive.resetOdometry(path.getStartingDifferentialPose()));
 
-    return resetPose.andThen(AutoBuilder.followPath(path));
+    // return resetPose.andThen(AutoBuilder.followPath(path));
+    return resetPose.andThen(m_robotDrive.followPathCommand("Forward"));
   }
   public Command getGoForwardLeft(){
     var path = getPath("Left Forward");
