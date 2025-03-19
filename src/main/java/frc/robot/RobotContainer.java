@@ -262,28 +262,75 @@ public class RobotContainer {
     Command align = new AutoScore(m_robotDrive, m_coralSubsystem, m_robotStateController, false, true).raceWith(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL4, ManipulatorPositions.kCoralWristPosL4));
 
 
-    return new SequentialCommandGroup(resetPose, setTarget, align, outTake, driveBack);
+
+    return new SequentialCommandGroup(resetPose, setTarget, align, outTake);
   }
 
 
   public Command right1p(){
+    
     var path = getPath("Right 1");
 
     Command resetPose = new InstantCommand(() -> m_robotDrive.resetOdometry(path.getStartingDifferentialPose()));
 
-    Command drive = resetPose.andThen(AutoBuilder.followPath(path));
+    Command driveForward = AutoBuilder.followPath(path);
 
-    return drive;
+    
+    var path2 = getPath("Go Back");
+
+
+    Command driveBack = AutoBuilder.followPath(path2);
+    
+    // Command setupScorePos = new InstantCommand( () -> m_robotStateController.setScoreManipulatorPos(ManipulatorPositions.kCoralElevatorPosL4, ManipulatorPositions.kCoralWristPosL4) )
+    // .alongWith( new InstantCommand( () -> m_robotStateController.setTargetAndScorePos(FieldPositions.GHPose, false) ))
+    // .andThen(new WaitCommand(0.5));
+    // Command score = new AutoScore(m_robotDrive, m_coralSubsystem, m_robotStateController, false, true).
+    // alongWith(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL3, ManipulatorPositions.kCoralWristPosL3));
+
+    Command outTake = new SetCoralIntakePercentSpeed(m_coralSubsystem, 1).alongWith(new SetCoralPosition(m_coralSubsystem, 0, 0.2)).raceWith(new WaitCommand(3));
+
+    // return getGoForward().andThen(setupScorePos.andThen(score).andThen(outTake));
+
+    Command setTarget = new InstantCommand(() -> m_robotStateController.setTargetAndScorePos(FieldPositions.EFPose, false));
+
+    Command align = new AutoScore(m_robotDrive, m_coralSubsystem, m_robotStateController, false, true).raceWith(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL4, ManipulatorPositions.kCoralWristPosL4));
+
+
+
+    return new SequentialCommandGroup(resetPose, setTarget, align, outTake);
   }
 
   public Command left1p(){
+
     var path = getPath("Left 1");
 
     Command resetPose = new InstantCommand(() -> m_robotDrive.resetOdometry(path.getStartingDifferentialPose()));
 
-    Command drive = resetPose.andThen(AutoBuilder.followPath(path));
+    Command driveForward = AutoBuilder.followPath(path);
 
-    return drive;
+    
+    var path2 = getPath("Go Back");
+
+
+    Command driveBack = AutoBuilder.followPath(path2);
+    
+    // Command setupScorePos = new InstantCommand( () -> m_robotStateController.setScoreManipulatorPos(ManipulatorPositions.kCoralElevatorPosL4, ManipulatorPositions.kCoralWristPosL4) )
+    // .alongWith( new InstantCommand( () -> m_robotStateController.setTargetAndScorePos(FieldPositions.GHPose, false) ))
+    // .andThen(new WaitCommand(0.5));
+    // Command score = new AutoScore(m_robotDrive, m_coralSubsystem, m_robotStateController, false, true).
+    // alongWith(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL3, ManipulatorPositions.kCoralWristPosL3));
+
+    Command outTake = new SetCoralIntakePercentSpeed(m_coralSubsystem, 1).alongWith(new SetCoralPosition(m_coralSubsystem, 0, 0.2)).raceWith(new WaitCommand(3));
+
+    // return getGoForward().andThen(setupScorePos.andThen(score).andThen(outTake));
+
+    Command setTarget = new InstantCommand(() -> m_robotStateController.setTargetAndScorePos(FieldPositions.IJPose, false));
+
+    Command align = new AutoScore(m_robotDrive, m_coralSubsystem, m_robotStateController, false, true).raceWith(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL4, ManipulatorPositions.kCoralWristPosL4));
+
+
+
+    return new SequentialCommandGroup(resetPose, setTarget, align, outTake);
   }
   
  
@@ -299,8 +346,8 @@ public class RobotContainer {
   }
   
   public Command getAutonomousCommand() {
-    //return chooser.getSelected();
+    return chooser.getSelected();
     // return center1p();
-    return getGoForward().andThen(new SetCoralIntakePercentSpeed(m_coralSubsystem, 1).raceWith(new WaitCommand(2)));
+    // return getGoForward().andThen(center1p());
   }
 }

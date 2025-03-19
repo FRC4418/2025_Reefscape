@@ -338,6 +338,10 @@ public class DriveSubsystem extends SubsystemBase {
           driveController, 
           config, 
           () -> {
+            var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent()) {
+              return alliance.get() == DriverStation.Alliance.Red;
+            }
             return false;
           },
           this
