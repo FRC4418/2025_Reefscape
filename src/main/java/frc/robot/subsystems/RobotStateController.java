@@ -134,6 +134,11 @@ public class RobotStateController extends SubsystemBase {
 
   @Override
   public void periodic() {
+    var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent()) {
+      isOnRed = alliance.get() == DriverStation.Alliance.Red;
+    }
+    
     if(m_robotDrive.getPose().getY() > 4){
       intakePose = isOnRed ? FieldPositions.leftIntakeRed : FieldPositions.rightIntakeBlue;
     }else{

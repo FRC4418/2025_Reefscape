@@ -180,6 +180,8 @@ public class RobotContainer {
     chooser.setDefaultOption("None", new InstantCommand());
 
     chooser.addOption("center1p", center1p());
+    chooser.addOption("left1p", left1p());
+    chooser.addOption("right1p", right1p());
 
     chooser.addOption("Forward",getGoForward());
     chooser.addOption("Left Forward",getGoForwardLeft());
