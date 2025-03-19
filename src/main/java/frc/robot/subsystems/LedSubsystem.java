@@ -5,14 +5,21 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Centimeters;
+import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Percent;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 
+import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.List;
+import java.util.Random;
+
 import edu.wpi.first.units.TimeUnit;
 import edu.wpi.first.units.UnitBuilder;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.units.measure.Time;
@@ -42,8 +49,24 @@ public class LedSubsystem extends SubsystemBase {
 
   private LEDPattern enabledPattern = LEDPattern.rainbow(255, 255);
 
+  
+  private LEDPattern redGrad = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, new Color(0,255,0), new Color(100,255,0)).scrollAtRelativeSpeed(Hertz.of(.5));;
+
+  private LEDPattern blueGrad = LEDPattern.gradient(LEDPattern.GradientType.kContinuous, new Color(255,0,200), new Color(0,100,255)).scrollAtRelativeSpeed(Hertz.of(.5));;
+
+
+  private LEDPattern fancy = blueGrad.breathe(Units.Seconds.of(5));
+
+  private Random random = new Random();
+
+  private double[] ledList = new double[ledBuffer.getLength()];
+
+  int rainbowFirstPixelHue = 0;
   /** Creates a new LedSubsystem. */
   public LedSubsystem() {
+    for (int i = 0; i < ledList.length; i++) {
+      ledList[i] = 0;
+    }
     rainbow = rainbow.scrollAtAbsoluteSpeed(MetersPerSecond.of(.25), kLedSpacing);
     m_led.setLength(ledBuffer.getLength());
     // m_led2.setLength(ledBuffer.getLength());
@@ -73,8 +96,28 @@ public class LedSubsystem extends SubsystemBase {
     }else if(DriverStation.isAutonomousEnabled()){
       setPattern(blue.breathe(Seconds.of(.5)));
     }else{
-      setPattern(rainbow);
+      updateLEDDisabled();
 
     }
+  }
+
+
+  private void updateLEDDisabled(){
+    rainbowFirstPixelHue ++;
+
+    for (int i = 0; i < ledBuffer.getLength(); i++) {
+      ledBuffer.setHSV(i, rainbowFirstPixelHue + (i * 180 / ledBuffer.getLength()) % 180, 255, 255);
+
+      ledList[i] -= 0.1;
+      if(random.nextDouble() < 0.005){
+        ledList[i] = 1;
+      }
+
+      if(ledList[i] < 0) continue;
+
+      ledBuffer.setHSV(i, 0, 0, (int) (255*ledList[i]));
+    }
+
+    m_led.setData(ledBuffer);
   }
 }
