@@ -105,9 +105,9 @@ public final class Constants {
     public static double kCoralElevatorPosL1 = 0;
 
     public static double kCoralWristPosIntake = -0.959931088597;
-    public static double kCoralWristPosL4 = 0.42;
-    public static double kCoralWristPosL3 = 0.415;
-    public static double kCoralWristPosL2 = 0.415;
+    public static double kCoralWristPosL4 = 0.41;
+    public static double kCoralWristPosL3 = 0.41;
+    public static double kCoralWristPosL2 = 0.41;
     public static double kCoralWristPosL1 = .3;
     
 
