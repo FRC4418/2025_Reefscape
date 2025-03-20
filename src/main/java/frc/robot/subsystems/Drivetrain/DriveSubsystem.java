@@ -70,7 +70,7 @@ public class DriveSubsystem extends SubsystemBase {
   public RobotConfig config = null;
 
 
-  private double teleopGyroOffset = 0;
+  private double teleopGyroOffset = 180;
 
   private double poseEstimationGyroOffset = 0;
 

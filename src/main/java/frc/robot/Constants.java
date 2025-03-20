@@ -180,6 +180,7 @@ public final class Constants {
     // Chassis configuration
     public static double robotWidth = 28;
 
+
     public static double robotRadius = (Math.sqrt(2*Math.pow(robotWidth, 2))/2)*0.254;
 
     
