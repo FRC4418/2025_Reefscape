@@ -149,7 +149,7 @@ public class RobotContainer {
 
     m_CommandXboxControllerDriver.a().toggleOnTrue(new AutoScore(m_robotDrive, m_coralSubsystem, m_robotStateController, false).alongWith(new SetCoralPositionToTarget(m_coralSubsystem, m_robotStateController)));
 
-    m_CommandXboxControllerDriver.b().whileTrue(new SetCoralIntakePercentSpeed(m_coralSubsystem, 1));
+    m_CommandXboxControllerDriver.b().whileTrue(new SetCoralIntakePercentSpeed(m_coralSubsystem, .9));
 
     m_CommandXboxControllerDriver.x().whileTrue(new SetCoralIntakePercentSpeed(m_coralSubsystem, -1));
 
@@ -258,7 +258,7 @@ public class RobotContainer {
     // Command score = new AutoScore(m_robotDrive, m_coralSubsystem, m_robotStateController, false, true).
     // alongWith(new SetCoralPosition(m_coralSubsystem, ManipulatorPositions.kCoralElevatorPosL3, ManipulatorPositions.kCoralWristPosL3));
 
-    Command outTake = new SetCoralIntakePercentSpeed(m_coralSubsystem, 1).alongWith(new SetCoralPosition(m_coralSubsystem, 0, 0.2)).raceWith(new WaitCommand(3));
+    Command outTake = new SetCoralIntakePercentSpeed(m_coralSubsystem, 1).alongWith(new SetCoralPositionToTarget(m_coralSubsystem, m_robotStateController)).raceWith(new WaitCommand(3));
 
     // return getGoForward().andThen(setupScorePos.andThen(score).andThen(outTake));
 
@@ -268,7 +268,7 @@ public class RobotContainer {
 
 
 
-    return new SequentialCommandGroup(resetPose, setTarget, resetToTarget, new WaitCommand(2), align, outTake);
+    return new SequentialCommandGroup(resetPose, setTarget, resetToTarget, new WaitCommand(2), align, outTake, new SetCoralPosition(m_coralSubsystem, 0, 0.2));
   }
 
 
