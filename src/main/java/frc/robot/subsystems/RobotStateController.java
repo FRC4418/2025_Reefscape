@@ -152,7 +152,7 @@ public class RobotStateController extends SubsystemBase {
       LEDPattern green = LEDPattern.solid(Color.kRed);
       setBaseLEDPattern(green.blink(Units.Second.of(.1)));
 
-      if(timer.get() > 2) {
+      if(timer.get() > 1) {
         setBaseLEDPattern(base);
       }
       if(!timer.isRunning()){

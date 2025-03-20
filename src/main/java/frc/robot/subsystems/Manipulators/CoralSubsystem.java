@@ -47,9 +47,11 @@ public class CoralSubsystem extends SubsystemBase {
 
   private double falconOffset = 0;
 
-  public DigitalInput m_beamBreak = new DigitalInput(9);
+  public DigitalInput m_beamBreak = new DigitalInput(8);
 
   public DigitalInput m_limitSwitch = new DigitalInput(0);
+
+  private double elevatorOffset = 0;
 
   /** Creates a new CoralSubsystem. */
   public CoralSubsystem() {
@@ -152,7 +154,11 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   public double getElevatorPos(){
-    return m_elevatorEncoder.getPosition();
+    return m_elevatorEncoder.getPosition() + elevatorOffset;
+  }
+
+  public void resetElevatorPos(){
+    elevatorOffset = -m_elevatorEncoder.getPosition();
   }
 
   public double getElevatorSpeed(){

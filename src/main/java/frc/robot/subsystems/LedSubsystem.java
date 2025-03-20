@@ -108,7 +108,7 @@ public class LedSubsystem extends SubsystemBase {
     for (int i = 0; i < ledBuffer.getLength(); i++) {
       ledBuffer.setHSV(i, rainbowFirstPixelHue + (i * 180 / ledBuffer.getLength()) % 180, 255, 255);
 
-      ledList[i] -= 0.1;
+      ledList[i] -= 0.05;
       if(random.nextDouble() < 0.005){
         ledList[i] = 1;
       }

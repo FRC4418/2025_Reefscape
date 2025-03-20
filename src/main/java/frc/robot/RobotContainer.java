@@ -139,6 +139,7 @@ public class RobotContainer {
     
 
     SmartDashboard.putData("Reset Gyro", new InstantCommand( () -> m_robotDrive.zeroHeading() ));
+    SmartDashboard.putData("Reset elevator pos", new InstantCommand( () -> m_coralSubsystem.resetElevatorPos() ));
 
     SmartDashboard.putData("Reset Pose Estimation", new InstantCommand( () -> m_robotDrive.resetPoseEstimation() ));
 
@@ -167,8 +168,8 @@ public class RobotContainer {
     m_CommandXboxControllerDriver.rightBumper().toggleOnTrue(new IntakeUntillGood(m_coralSubsystem, -.5));
 
 
-    m_CommandXboxControllerDriver.rightTrigger().whileTrue(new SetClimberPercentSpeed(m_climber, 0.9));
-    m_CommandXboxControllerDriver.leftTrigger().whileTrue(new SetClimberPercentSpeed(m_climber, -0.9));
+    m_CommandXboxControllerDriver.rightTrigger().whileTrue(new SetClimberPercentSpeed(m_climber, 1));
+    m_CommandXboxControllerDriver.leftTrigger().whileTrue(new SetClimberPercentSpeed(m_climber, -1));
 
     m_climber.setDefaultCommand(new SetClimberPercentSpeed(m_climber, 0));
 
