@@ -244,6 +244,8 @@ public class RobotContainer {
 
     Command driveForward = AutoBuilder.followPath(path);
 
+    Command resetToTarget = new InstantCommand( () -> m_robotDrive.resetOdometry(m_robotStateController.getTargetPose()) );
+
     
     var path2 = getPath("Go Back");
 
@@ -266,7 +268,7 @@ public class RobotContainer {
 
 
 
-    return new SequentialCommandGroup(resetPose, setTarget, align, outTake);
+    return new SequentialCommandGroup(resetPose, setTarget, resetToTarget, new WaitCommand(2), align, outTake);
   }
 
 
