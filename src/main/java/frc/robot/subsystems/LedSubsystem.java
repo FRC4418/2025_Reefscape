@@ -35,9 +35,9 @@ import frc.robot.Configs;
 public class LedSubsystem extends SubsystemBase {
   private AddressableLED m_led = new AddressableLED(0);
   // private AddressableLED m_led2 = new AddressableLED(1);
-  private AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(242);
-  private AddressableLEDBufferView leftView = ledBuffer.createView(0, 121);
-  private AddressableLEDBufferView rightView = ledBuffer.createView(122, 240).reversed();
+  private AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(104);
+  private AddressableLEDBufferView leftView = ledBuffer.createView(0, 51);
+  private AddressableLEDBufferView rightView = ledBuffer.createView(52, 103).reversed();
 
   private LEDPattern red = LEDPattern.solid(new Color(0, 255, 0));
   // private LEDPattern green = LEDPattern.solid(new Color(0, 255, 0));
@@ -104,22 +104,21 @@ public class LedSubsystem extends SubsystemBase {
 
 
   private void updateLEDDisabled(){
-    rainbowFirstPixelHue++;
+    rainbowFirstPixelHue ++;
 
     for (int i = 0; i < ledBuffer.getLength(); i++) {
-        if (i < 88) {
-            if (i % 2 == 0) {
-                ledBuffer.setRGB(i, 255, 0, 0); // Red
-            } else {
-                ledBuffer.setRGB(i, 0, 0, 0); // Off
-            }
-        } else {
-            ledBuffer.setRGB(i, 0, 0, 0); // Off
-        }
+      ledBuffer.setHSV(i, rainbowFirstPixelHue + (i * 180 / ledBuffer.getLength()) % 180, 255, 255);
+
+      ledList[i] -= 0.02;
+      if(random.nextDouble() < 0.005){
+        ledList[i] = 1;
+      }
+
+      if(ledList[i] < 0) continue;
+
+      ledBuffer.setHSV(i, 0, 0, (int) (255*ledList[i]));
     }
 
     m_led.setData(ledBuffer);
+  }
 }
-
-}
-

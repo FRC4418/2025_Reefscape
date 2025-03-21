@@ -76,7 +76,7 @@ public class AutoScore extends Command {
     drivePath2 = AutoBuilder.followPath(getScorePath());
     
 
-    mainCommand = AutoBuilder.followPath(getPath(m_robotDrive.getPose(), m_robotStateController.getTargetPose().transformBy(m_robotStateController.getScoreTransform()).transformBy(FieldPositions.scoreOffset)));
+    mainCommand = AutoBuilder.followPath(getPath(m_robotDrive.getPose(), m_robotStateController.getTargetPose().transformBy(m_robotStateController.getScoreTransform())));
     
     mainCommand.initialize();
 
