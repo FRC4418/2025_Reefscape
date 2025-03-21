@@ -132,7 +132,7 @@ public class CoralSubsystem extends SubsystemBase {
     double falconPos = getFalconPos();
 
     if(sparkPos - falconPos > 0.1 || sparkPos - falconPos < -0.1){
-      return falconPos;
+      // return falconPos;
       // resetFalconToSpark();
     }
     return sparkPos;

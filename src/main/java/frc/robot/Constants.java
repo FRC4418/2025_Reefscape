@@ -83,7 +83,7 @@ public final class Constants {
       new Pose2d(13. + angledXOffset,4 - angledYoffset, Rotation2d.fromDegrees(180-60))
     };
 
-    public static Transform2d scoreOffset = new Transform2d(0, 0.15, new Rotation2d());
+    public static Transform2d scoreOffset = new Transform2d(0.03, 0.1, new Rotation2d());
 
     public static Pose2d rightIntakeBlue =new Pose2d(1,1, Rotation2d.fromDegrees(-125+180)).transformBy(new Transform2d(0,.01, new Rotation2d()));
     public static Pose2d rightIntakeRed =new Pose2d(16.5,1, Rotation2d.fromDegrees(-55+180)).transformBy(new Transform2d(0,.01, new Rotation2d()));
@@ -99,15 +99,15 @@ public final class Constants {
 
   public static final class ManipulatorPositions {
     public static double kCoralElevatorPosIntake = 5;
-    public static double kCoralElevatorPosL4 = 132;
-    public static double kCoralElevatorPosL3 = 74;
-    public static double kCoralElevatorPosL2 = 36+3;
+    public static double kCoralElevatorPosL4 = 134;
+    public static double kCoralElevatorPosL3 = 77;
+    public static double kCoralElevatorPosL2 = 39;
     public static double kCoralElevatorPosL1 = 0;
 
     public static double kCoralWristPosIntake = -0.959931088597;
-    public static double kCoralWristPosL4 = 0.41;
-    public static double kCoralWristPosL3 = 0.41;
-    public static double kCoralWristPosL2 = 0.41;
+    public static double kCoralWristPosL4 = 0.427;
+    public static double kCoralWristPosL3 = 0.425;
+    public static double kCoralWristPosL2 = 0.425;
     public static double kCoralWristPosL1 = .3;
     
 
