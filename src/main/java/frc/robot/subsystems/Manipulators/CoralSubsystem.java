@@ -129,7 +129,7 @@ public class CoralSubsystem extends SubsystemBase {
     double sparkPos = m_wristEncoder.getPosition();
     sparkPos = sparkPos > 0.9 ? 0 : sparkPos;
 
-    double falconPos = getFalconPos();
+    double falconPos = getFalconPos(); // used as a backup encoder if spark encoder fails
 
     if(sparkPos - falconPos > 0.1 || sparkPos - falconPos < -0.1){
       // return falconPos;
